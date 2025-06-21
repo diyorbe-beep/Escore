@@ -122,7 +122,6 @@ const Navbar = ({ onNavigate, isAdmin, isJournalist, user, onLogout }) => (
       <div style={{ display: 'flex', gap: '32px', textAlign: 'center', justifyContent: 'center' }}>
         <button onClick={() => onNavigate('home')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Asosiy</button>
         <button onClick={() => onNavigate('newslist')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Yangiliklar</button>
-        <button onClick={() => onNavigate('newsdetail')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Yangilik Haqida</button>
         <button onClick={() => onNavigate('livescore')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Jonli Natijalar</button>
         <button onClick={() => onNavigate('poll')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>So'rovnoma</button>
         {isAdmin && (

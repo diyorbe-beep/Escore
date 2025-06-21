@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const transfers = [
   { title: "Chelsea Target Everton's", img: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=200&q=80' },
   { title: "Napoli's Scudetto Push", img: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=200&q=80' },
@@ -49,7 +50,7 @@ const Home = () => (
         {/* HEADLINE & LEAD */}
         <div style={{ gridRow: 1, gridColumn: 3 }}> 
           <h1 className="home-headline">HAALAND REAL MADRIDGA  O'TYABDIMI?</h1>
-          <div className="home-lead">Norvegiyalik hujumchi mavsum oxirida Dortmundning “Borussiya” klubini tark etishi mumkin.</div>
+          <div className="home-lead">Norvegiyalik hujumchi mavsum oxirida Dortmundning "Borussiya" klubini tark etishi mumkin.</div>
         </div>
         <div style={{ gridRow: 1, gridColumn: 4 }}>
           <div className="poll-block">

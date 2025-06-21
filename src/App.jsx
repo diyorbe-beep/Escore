@@ -12,6 +12,10 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import JournalistPanel from './components/JournalistPanel'
 import ProfileSettings from './components/ProfileSettings'
+import Calendar from './components/Calendar';
+import UpcomingMatches from './components/UpcomingMatches';
+import FeaturedMatch from './components/FeaturedMatch';
+import TopLeagues from './components/TopLeagues'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -19,14 +23,15 @@ const App = () => {
   const [showAuth, setShowAuth] = useState(false)
   const [authPage, setAuthPage] = useState('login')
   const [currentNewsId, setCurrentNewsId] = useState(null)
+  const [selectedNews, setSelectedNews] = useState(null)
 
-  const handleNavigate = (newPage, newsId = null) => {
+  const handleNavigate = (newPage, newsData = null) => {
     if (newPage === 'login' || newPage === 'register') {
       setShowAuth(true)
       setAuthPage(newPage)
-    } else if (newPage === 'newsdetail' && newsId) {
+    } else if (newPage === 'newsdetail' && newsData) {
       setPage(newPage)
-      setCurrentNewsId(newsId)
+      setSelectedNews(newsData)
       setShowAuth(false)
     } else {
       setPage(newPage)
@@ -80,10 +85,8 @@ const App = () => {
       content = <Layout><NewsList onNavigate={handleNavigate} /></Layout>
       break
     case 'newsdetail':
-      content = currentNewsId ? (
-        <Layout><NewsDetailPage newsId={currentNewsId} /></Layout>
-      ) : (
-        <Layout><NewsDetail /></Layout>
+      content = (
+        <Layout><NewsDetail news={selectedNews} /></Layout>
       )
       break
     case 'livescore':
@@ -113,13 +116,17 @@ const App = () => {
 
   return (
     <>
-      <Navbar 
-        onNavigate={handleNavigate} 
-        isAdmin={user?.role === 'admin'} 
-        isJournalist={user?.role === 'journalist'} 
+      <Navbar
+        onNavigate={handleNavigate}
+        isAdmin={user?.role === 'admin'}
+        isJournalist={user?.role === 'journalist'}
         user={user}
         onLogout={handleLogout}
       />
+      <FeaturedMatch />
+      <UpcomingMatches />
+      <Calendar />
+      <TopLeagues />
       {content}
     </>
   )

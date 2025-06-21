@@ -1,0 +1,112 @@
+.top-leagues-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px 0;
+    position: absolute;
+    top: 750px;
+    left: 10px;
+
+    .top-leagues-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .top-leagues-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+
+    .top-league-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 8px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .top-league-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            margin-right: 12px;
+            border-radius: 4px;
+            background: #ffffff;
+            padding: 2px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-league-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .top-leagues-card {
+        padding: 16px;
+        margin: 16px 0;
+
+        .top-leagues-list {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+        }
+
+        .top-league-item {
+            padding: 10px;
+
+            .top-league-logo {
+                width: 28px;
+                height: 28px;
+                margin-right: 10px;
+            }
+
+            .top-league-name {
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .top-leagues-card {
+        .top-leagues-list {
+            grid-template-columns: 1fr;
+        }
+
+        .top-league-item {
+            .top-league-logo {
+                width: 24px;
+                height: 24px;
+                margin-right: 8px;
+            }
+
+            .top-league-name {
+                font-size: 12px;
+            }
+        }
+    }
+}

@@ -174,7 +174,7 @@ const LiveScore = () => {
 
   if (loading && matches.length === 0) {
     return (
-      <div className="live-score">
+      <div className="live-score-page">
         <div className="loading-state">
           <div className="loading-spinner"></div>
           <div className="loading-text">O'yinlar yuklanmoqda...</div>
@@ -185,7 +185,7 @@ const LiveScore = () => {
 
   if (error && matches.length === 0) {
     return (
-      <div className="live-score">
+      <div className="live-score-page">
         <div className="error-state">
           <FiAlertCircle className="error-icon" />
           <div className="error-text">{error}</div>
@@ -199,26 +199,18 @@ const LiveScore = () => {
   }
 
   return (
-    <div className="live-score">
-      <div className="live-score-header">
-        <div className="header-content">
-          <h2>Jonli Natijalar</h2>
-          <div className="header-subtitle">
-            {getCurrentDate()} • Eng so'nggi futbol natijalari
-          </div>
-        </div>
-        <div className="header-actions">
-          <div className="last-updated">
+    <div className="live-score-page">
+      <div className="page-header">
+        <h1>Jonli Natijalar</h1>
+        <div className="header-meta">
+          <span className="current-date">{getCurrentDate()}</span>
+          <span className="last-updated">
             Oxirgi yangilanish: {lastUpdated.toLocaleTimeString('uz-UZ')}
-          </div>
-          <button className="refresh-btn" onClick={handleRefresh}>
-            <FiRefreshCw />
-            Yangilash
-          </button>
+          </span>
         </div>
       </div>
 
-      <div className="filters-section">
+      <div className="controls-section">
         <div className="filters">
           {filters.map(filter => (
             <button
@@ -231,9 +223,13 @@ const LiveScore = () => {
             </button>
           ))}
         </div>
+        <button className="refresh-btn" onClick={handleRefresh}>
+          <FiRefreshCw />
+          Yangilash
+        </button>
       </div>
 
-      <div className="matches-container">
+      <div className="matches-section">
         {filteredMatches.length === 0 ? (
           <div className="no-matches">
             <div className="no-matches-icon">⚽</div>
@@ -288,7 +284,7 @@ const LiveScore = () => {
         )}
       </div>
 
-      <div className="live-score-footer">
+      <div className="page-footer">
         <div className="footer-info">
           <p>Ma'lumotlar har 30 soniyada avtomatik yangilanadi</p>
           <p>Barcha vaqtlar mahalliy vaqtda ko'rsatiladi</p>
