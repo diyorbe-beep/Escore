@@ -1,0 +1,15 @@
+@import './scss/main.scss';
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+}
+
+
+.wrapper{
+  max-width: 1200px;
+  margin: 0 auto;
+}
