@@ -4,11 +4,11 @@ import './TopLeagues.scss';
 const leagues = [
   {
     name: 'UEFA Champions League',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/b/bf/UEFA_Champions_League_logo_2.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/UEFA_Champions_League.svg/1200px-UEFA_Champions_League.svg.png',
   },
   {
     name: 'UEFA Europa League',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/0/03/UEFA_Europa_League_logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/UEFA_Europa_League_logo_%282024_version%29.svg/1436px-UEFA_Europa_League_logo_%282024_version%29.svg.png',
   },
   {
     name: 'Premier League',
@@ -16,43 +16,43 @@ const leagues = [
   },
   {
     name: 'LaLiga',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/7/79/LaLiga_Santander.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/LaLiga_logo_2023.svg/2048px-LaLiga_logo_2023.svg.png',
   },
   {
     name: 'Bundesliga',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/6/67/Bundesliga_logo_%282017%29.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/df/Bundesliga_logo_%282017%29.svg/1200px-Bundesliga_logo_%282017%29.svg.png',
   },
   {
     name: 'Serie A',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/e/e1/Serie_A_logo_%282019%29.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/ab/Serie_A_ENILIVE_logo.svg/1200px-Serie_A_ENILIVE_logo.svg.png',
   },
   {
     name: 'Ligue 1',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/5/5e/Ligue1.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Ligue_1_Uber_Eats_logo.svg/1200px-Ligue_1_Uber_Eats_logo.svg.png',
   },
   {
     name: 'Eredivisie',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/5/56/Eredivisie_logo.svg',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR78ra_hc69VkQJmDiagH7Gz12CnISYdV_z4Q&s',
   },
   {
     name: 'Brasileirão Série A',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/5/5e/Campeonato_Brasileiro_S%C3%A9rie_A_logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/pt/4/42/Campeonato_Brasileiro_S%C3%A9rie_A_logo.png',
   },
   {
     name: 'CONMEBOL Libertadores',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/6/6e/Copa_Libertadores_logo.svg',
+    logo: 'https://logowik.com/content/uploads/images/conmebol-libertadores4840.jpg',
   },
   {
     name: 'CAF Champions League',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/7/7a/CAF_Champions_League_logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/d/d5/CAF_Champions_League.png',
   },
   {
     name: 'MLS',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Major_League_Soccer_logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/MLS_crest_logo_RGB_gradient.svg/1200px-MLS_crest_logo_RGB_gradient.svg.png',
   },
   {
     name: 'World Championship',
-    logo: 'https://cdn-icons-png.flaticon.com/512/1822/1822899.png',
+    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRaBSnSWTsOMGUSZlH8SN63M7FydyWwo_WzA&s',
   },
 ];
 

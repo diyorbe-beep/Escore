@@ -24,20 +24,47 @@ const App = () => {
   const [authPage, setAuthPage] = useState('login')
   const [currentNewsId, setCurrentNewsId] = useState(null)
   const [selectedNews, setSelectedNews] = useState(null)
+  // Back stack for navigation
+  const [pageStack, setPageStack] = useState([]);
+
+  // Page titles
+  const pageTitles = {
+    home: 'Bosh sahifa',
+    newslist: 'Yangiliklar',
+    newsdetail: 'Yangilik tafsiloti',
+    livescore: 'Live Score',
+    poll: "So'rovnoma",
+    admin: 'Admin Panel',
+    journalist: 'Jurnalist Paneli',
+    settings: 'Profil sozlamalari',
+    login: 'Kirish',
+    register: "Ro'yxatdan o'tish"
+  };
 
   const handleNavigate = (newPage, newsData = null) => {
     if (newPage === 'login' || newPage === 'register') {
       setShowAuth(true)
       setAuthPage(newPage)
     } else if (newPage === 'newsdetail' && newsData) {
+      setPageStack(stack => [...stack, page]);
       setPage(newPage)
       setSelectedNews(newsData)
       setShowAuth(false)
     } else {
+      setPageStack(stack => [...stack, page]);
       setPage(newPage)
       setShowAuth(false)
     }
   }
+
+  const handleBack = () => {
+    setPageStack(stack => {
+      if (stack.length === 0) return stack;
+      const prev = stack[stack.length - 1];
+      setPage(prev);
+      return stack.slice(0, -1);
+    });
+  };
 
   const handleLogout = () => {
     setUser(null)
@@ -54,26 +81,44 @@ const App = () => {
 
   // Agar auth sahifasi ochiq bo'lsa
   if (showAuth) {
-    if (authPage === 'login') {
-      return <Login onLogin={u => {
-        if (u === 'register') {
-          setAuthPage('register')
-        } else {
-          setUser(u)
-          setShowAuth(false)
-        }
-      }} />
-    }
-    if (authPage === 'register') {
-      return <Register onRegister={u => {
-        if (u === 'login') {
-          setAuthPage('login')
-        } else {
-          setUser(u)
-          setShowAuth(false)
-        }
-      }} />
-    }
+    return (
+      <>
+        <div style={{maxWidth:900,margin:'0 auto',padding:'12px 0 0 0',display:'flex',alignItems:'center',gap:16}}>
+          {pageStack.length > 0 && (
+            <button onClick={() => {
+              setShowAuth(false);
+              setPageStack(stack => {
+                if (stack.length === 0) return stack;
+                const prev = stack[stack.length - 1];
+                setPage(prev);
+                return stack.slice(0, -1);
+              });
+            }} style={{padding:'6px 16px',borderRadius:4,border:'1px solid #ccc',background:'#f7f7f7',cursor:'pointer',fontWeight:600}}>&larr; Orqaga</button>
+          )}
+          <span style={{fontSize:'1.1em',fontWeight:600}}>{pageTitles[authPage] || authPage}</span>
+        </div>
+        {authPage === 'login' && (
+          <Login onLogin={u => {
+            if (u === 'register') {
+              setAuthPage('register')
+            } else {
+              setUser(u)
+              setShowAuth(false)
+            }
+          }} />
+        )}
+        {authPage === 'register' && (
+          <Register onRegister={u => {
+            if (u === 'login') {
+              setAuthPage('login')
+            } else {
+              setUser(u)
+              setShowAuth(false)
+            }
+          }} />
+        )}
+      </>
+    );
   }
 
   let content
@@ -127,6 +172,13 @@ const App = () => {
       <UpcomingMatches />
       <Calendar />
       <TopLeagues />
+      {/* Back button and current page indicator */}
+      <div style={{maxWidth:900,margin:'0 auto',padding:'12px 0 0 0',display:'flex',alignItems:'center',gap:16}}>
+        {pageStack.length > 0 && (
+          <button onClick={handleBack} style={{padding:'6px 16px',borderRadius:4,border:'1px solid #ccc',background:'#f7f7f7',cursor:'pointer',fontWeight:600}}>&larr; Orqaga</button>
+        )}
+        <span style={{fontSize:'1.1em',fontWeight:600}}>{pageTitles[page] || page}</span>
+      </div>
       {content}
     </>
   )

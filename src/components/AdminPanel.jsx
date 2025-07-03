@@ -1,141 +1,123 @@
 import React, { useState } from 'react';
 
 const initialNews = [
-  { id: 1, title: "Haaland to Real Madrid?", status: 'Published' },
-  { id: 2, title: "Napoli's Scudetto Push", status: 'Draft' },
+  { id: 1, title: "Haaland to Real Madrid?", content: "Transfer news...", image: null, status: 'Published', deleted: false },
+  { id: 2, title: "Napoli's Scudetto Push", content: "Napoli are pushing...", image: null, status: 'Draft', deleted: false },
 ];
 
-const initialJournalists = [
-  { id: 1, name: 'Ali', email: 'ali@mail.com', status: 'Pending' },
-  { id: 2, name: 'Bekzod', email: 'bekzod@mail.com', status: 'Approved' },
-  { id: 3, name: 'Sardor', email: 'sardor@mail.com', status: 'Rejected' },
+const initialAdmins = [
+  { id: 1, name: 'Asosiy Admin', email: 'superadmin@mail.com', role: 'superadmin' },
+  { id: 2, name: 'Kichik Admin', email: 'admin@mail.com', role: 'admin' },
 ];
 
-const initialUsers = [
-  { id: 1, name: 'User1', email: 'user1@mail.com', status: 'Active' },
-  { id: 2, name: 'User2', email: 'user2@mail.com', status: 'Blocked' },
-  { id: 3, name: 'User3', email: 'user3@mail.com', status: 'Active' },
-];
-
-const AdminPanel = () => {
+const AdminPanel = ({ userRole = 'admin' }) => {
   const [news, setNews] = useState(initialNews);
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [image, setImage] = useState(null);
   const [status, setStatus] = useState('Draft');
   const [error, setError] = useState('');
-  const [journalists, setJournalists] = useState(initialJournalists);
-  const [users, setUsers] = useState(initialUsers);
+  const [admins, setAdmins] = useState(initialAdmins);
+  const [adminName, setAdminName] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminError, setAdminError] = useState('');
 
   const handleAdd = e => {
     e.preventDefault();
-    if (!title) {
-      setError('Title is required');
+    if (!title || !content) {
+      setError('Title va to\'liq matn majburiy');
       return;
     }
-    setNews([{ id: Date.now(), title, status }, ...news]);
+    const newNews = {
+      id: Date.now(),
+      title,
+      content,
+      image: image ? URL.createObjectURL(image) : null,
+      status,
+      deleted: false
+    };
+    setNews([newNews, ...news]);
     setTitle('');
+    setContent('');
+    setImage(null);
     setStatus('Draft');
     setError('');
   };
 
   const handleDelete = id => {
-    setNews(news.filter(n => n.id !== id));
+    setNews(news.map(n => n.id === id ? { ...n, deleted: true } : n));
   };
 
-  const handleJournalistStatus = (id, newStatus) => {
-    setJournalists(journalists.map(j => j.id === id ? { ...j, status: newStatus } : j));
+  const handleAddAdmin = e => {
+    e.preventDefault();
+    if (!adminName || !adminEmail) {
+      setAdminError('Ism va email majburiy');
+      return;
+    }
+    setAdmins([
+      ...admins,
+      { id: Date.now(), name: adminName, email: adminEmail, role: 'admin' }
+    ]);
+    setAdminName('');
+    setAdminEmail('');
+    setAdminError('');
   };
 
-  const handleUserBlock = (id, newStatus) => {
-    setUsers(users.map(u => u.id === id ? { ...u, status: newStatus } : u));
+  const handleRemoveAdmin = id => {
+    setAdmins(admins.filter(a => a.id !== id || a.role === 'superadmin'));
   };
 
   return (
     <div className="block" style={{padding: '32px', background: '#fff', maxWidth: 700, margin: '0 auto'}}>
       <h1 style={{marginBottom: '0.5em'}}>Admin Panel</h1>
+      {userRole === 'superadmin' && (
+        <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
+          <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Adminlar boshqaruvi</h2>
+          <form onSubmit={handleAddAdmin} style={{marginBottom: 16}}>
+            <input type="text" placeholder="Admin ismi" value={adminName} onChange={e => setAdminName(e.target.value)} style={{marginRight: 8, padding: 8}} />
+            <input type="email" placeholder="Admin email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} style={{marginRight: 8, padding: 8}} />
+            <button type="submit" style={{padding: '8px 16px', background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 4}}>Qo'shish</button>
+          </form>
+          {adminError && <div style={{color: 'red', marginBottom: 8}}>{adminError}</div>}
+          <ul style={{listStyle: 'none', padding: 0}}>
+            {admins.map(a => (
+              <li key={a.id} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0'}}>
+                <span><b>{a.name}</b> ({a.email}) <span style={{color:'#888'}}>{a.role === 'superadmin' ? 'Asosiy admin' : 'Kichik admin'}</span></span>
+                {a.role !== 'superadmin' && <button onClick={() => handleRemoveAdmin(a.id)} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '4px 10px', cursor: 'pointer'}}>O'chirish</button>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <section style={{margin: '24px 0'}}>
-        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Add News</h2>
+        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Yangilik qo'shish</h2>
         <form onSubmit={handleAdd} style={{marginBottom: 24}}>
           <input type="text" placeholder="News title" value={title} onChange={e => setTitle(e.target.value)} style={{width: '60%', padding: 10, borderRadius: 4, border: '1.5px solid #d6d3c7', fontSize: '1em', fontFamily: 'Poppins, Arial, sans-serif', marginRight: 12}} />
           <select value={status} onChange={e => setStatus(e.target.value)} style={{padding: 10, borderRadius: 4, border: '1.5px solid #d6d3c7', fontFamily: 'Poppins, Arial, sans-serif', fontSize: '1em', marginRight: 12}}>
             <option value="Draft">Draft</option>
             <option value="Published">Published</option>
           </select>
-          <button type="submit" style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 18px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em'}}>Add</button>
+          <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} style={{marginRight: 12}} />
+          <br />
+          <textarea placeholder="To'liq matn" value={content} onChange={e => setContent(e.target.value)} style={{width: '80%', marginTop: 10, padding: 10, borderRadius: 4, border: '1.5px solid #d6d3c7', fontSize: '1em', fontFamily: 'Poppins, Arial, sans-serif', minHeight: 60}} />
+          <br />
+          <button type="submit" style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 4, padding: '10px 18px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em', marginTop: 10}}>Qo'shish</button>
         </form>
         {error && <div style={{color: 'red', marginBottom: 12, fontFamily: 'Inter, Arial, sans-serif'}}>{error}</div>}
-        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>News List</h2>
+        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Yangiliklar ro'yxati</h2>
         <ul style={{fontFamily: 'Inter, Arial, sans-serif', fontSize: '1.05em', padding: 0, listStyle: 'none'}}>
-          {news.map(n => (
+          {news.filter(n => !n.deleted).map(n => (
             <li key={n.id} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e0e0e0', padding: '10px 0'}}>
-              <span><b>{n.title}</b> <span style={{color: '#888', fontSize: '0.95em'}}>({n.status})</span></span>
-              <button onClick={() => handleDelete(n.id)} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>Delete</button>
+              <span>
+                <b>{n.title}</b> <span style={{color: '#888', fontSize: '0.95em'}}>({n.status})</span>
+                <br />
+                <span style={{fontSize: '0.97em'}}>{n.content}</span>
+                {n.image && <div><img src={n.image} alt="news" style={{maxWidth: 120, marginTop: 6}} /></div>}
+              </span>
+              <button onClick={() => handleDelete(n.id)} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>O'chirish</button>
             </li>
           ))}
         </ul>
-      </section>
-      <section style={{margin: '32px 0'}}>
-        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Journalists</h2>
-        <table style={{width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, Arial, sans-serif', fontSize: '1.05em', background: '#fff'}}>
-          <thead>
-            <tr style={{background: '#f7f3ec'}}>
-              <th style={{padding: '10px 6px', textAlign: 'left', color: '#1a3a6b', fontFamily: 'Poppins, Arial, sans-serif'}}>Name</th>
-              <th style={{padding: '10px 6px', textAlign: 'left', color: '#1a3a6b', fontFamily: 'Poppins, Arial, sans-serif'}}>Email</th>
-              <th style={{padding: '10px 6px', textAlign: 'left', color: '#1a3a6b', fontFamily: 'Poppins, Arial, sans-serif'}}>Status</th>
-              <th style={{padding: '10px 6px'}}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {journalists.map(j => (
-              <tr key={j.id} style={{borderBottom: '1px solid #e0e0e0'}}>
-                <td style={{padding: '10px 6px'}}>{j.name}</td>
-                <td style={{padding: '10px 6px'}}>{j.email}</td>
-                <td style={{padding: '10px 6px'}}>{j.status}</td>
-                <td style={{padding: '10px 6px'}}>
-                  {j.status === 'Pending' && (
-                    <>
-                      <button onClick={() => handleJournalistStatus(j.id, 'Approved')} style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer', marginRight: 8}}>Approve</button>
-                      <button onClick={() => handleJournalistStatus(j.id, 'Rejected')} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>Reject</button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <section style={{margin: '24px 0'}}>
-        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Users</h2>
-        <table style={{width: '100%', borderCollapse: 'collapse', fontFamily: 'Inter, Arial, sans-serif', fontSize: '1.05em', background: '#fff'}}>
-          <thead>
-            <tr style={{background: '#f7f3ec'}}>
-              <th style={{padding: '10px 6px', textAlign: 'left', color: '#1a3a6b', fontFamily: 'Poppins, Arial, sans-serif'}}>Name</th>
-              <th style={{padding: '10px 6px', textAlign: 'left', color: '#1a3a6b', fontFamily: 'Poppins, Arial, sans-serif'}}>Email</th>
-              <th style={{padding: '10px 6px', textAlign: 'left', color: '#1a3a6b', fontFamily: 'Poppins, Arial, sans-serif'}}>Status</th>
-              <th style={{padding: '10px 6px'}}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(u => (
-              <tr key={u.id} style={{borderBottom: '1px solid #e0e0e0'}}>
-                <td style={{padding: '10px 6px'}}>{u.name}</td>
-                <td style={{padding: '10px 6px'}}>{u.email}</td>
-                <td style={{padding: '10px 6px'}}>{u.status}</td>
-                <td style={{padding: '10px 6px'}}>
-                  {u.status === 'Active' ? (
-                    <button onClick={() => handleUserBlock(u.id, 'Blocked')} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>Block</button>
-                  ) : (
-                    <button onClick={() => handleUserBlock(u.id, 'Active')} style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>Unblock</button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-      <section style={{margin: '24px 0'}}>
-        <h2>Advertisement Zones</h2>
-        <div>[REKLAMA ZONASI 1]</div>
-        <div>[REKLAMA ZONASI 2]</div>
       </section>
     </div>
   );

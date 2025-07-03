@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-
+import imgs  from '../assets';
 // Mock data for demonstration
 const featuredMatch = {
   home: {
-    name: 'Kortrijk',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/6/6e/KV_Kortrijk_logo.png',
+    name: 'Real Madrid',
+    logo: imgs.realMadrid,
   },
   away: {
-    name: 'KAA Gent',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/5/5d/KAA_Gent_logo.png',
+    name: 'Barcelona',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/800px-FC_Barcelona_%28crest%29.svg.png',
   },
   time: '17:00',
   date: new Date(), // today
@@ -22,8 +22,7 @@ function getTimeUntilMatch(matchTime) {
   if (diff < 0) diff = 0;
   const h = String(Math.floor(diff / 1000 / 60 / 60)).padStart(2, '0');
   const m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
-  const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-  return `${h}:${m}:${s}`;
+  return `${h}:${m}`;
 }
 
 const FeaturedMatch = () => {
@@ -46,7 +45,7 @@ const FeaturedMatch = () => {
         </div>
         <div className="match-info-block">
           <div className="match-time">{featuredMatch.time}</div>
-          <div className="match-date">Today</div>
+          <div className="match-date">5.10.2025</div>
           <div className="match-timer">{timer}</div>
         </div>
         <div className="team-block">
