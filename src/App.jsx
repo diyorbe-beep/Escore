@@ -16,6 +16,7 @@ import Calendar from './components/Calendar';
 import UpcomingMatches from './components/UpcomingMatches';
 import FeaturedMatch from './components/FeaturedMatch';
 import TopLeagues from './components/TopLeagues'
+import Advertisement from './components/advertisement'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -83,7 +84,7 @@ const App = () => {
   if (showAuth) {
     return (
       <>
-        <div style={{maxWidth:900,margin:'0 auto',padding:'12px 0 0 0',display:'flex',alignItems:'center',gap:16}}>
+        <div className='pages_name' style={{maxWidth:900,margin:'20px auto',padding:'12px 0 12px 0',display:'flex',alignItems:'center',gap:16}}>
           {pageStack.length > 0 && (
             <button onClick={() => {
               setShowAuth(false);
@@ -95,7 +96,6 @@ const App = () => {
               });
             }} style={{padding:'6px 16px',borderRadius:4,border:'1px solid #ccc',background:'#f7f7f7',cursor:'pointer',fontWeight:600}}>&larr; Orqaga</button>
           )}
-          <span style={{fontSize:'1.1em',fontWeight:600}}>{pageTitles[authPage] || authPage}</span>
         </div>
         {authPage === 'login' && (
           <Login onLogin={u => {
@@ -167,18 +167,13 @@ const App = () => {
         isJournalist={user?.role === 'journalist'}
         user={user}
         onLogout={handleLogout}
+        currentPage={page}
       />
       <FeaturedMatch />
       <UpcomingMatches />
       <Calendar />
+      <Advertisement />
       <TopLeagues />
-      {/* Back button and current page indicator */}
-      <div style={{maxWidth:900,margin:'0 auto',padding:'12px 0 0 0',display:'flex',alignItems:'center',gap:16}}>
-        {pageStack.length > 0 && (
-          <button onClick={handleBack} style={{padding:'6px 16px',borderRadius:4,border:'1px solid #ccc',background:'#f7f7f7',cursor:'pointer',fontWeight:600}}>&larr; Orqaga</button>
-        )}
-        <span style={{fontSize:'1.1em',fontWeight:600}}>{pageTitles[page] || page}</span>
-      </div>
       {content}
     </>
   )

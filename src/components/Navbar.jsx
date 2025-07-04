@@ -2,7 +2,7 @@ import React from 'react';
 import UserProfile from './UserProfile';
 import imgs from '../assets/index'
 
-const Navbar = ({ onNavigate, isAdmin, isJournalist, user, onLogout }) => (
+const Navbar = ({ onNavigate, isAdmin, isJournalist, user, onLogout, currentPage }) => (
   <header>
     <div className="wrapper">
       <div className='nav_top'>
@@ -64,39 +64,13 @@ const Navbar = ({ onNavigate, isAdmin, isJournalist, user, onLogout }) => (
             <>
               <button
                 onClick={() => onNavigate('login')}
-                style={{
-                  background: 'none',
-                  border: '1px solid #007bff',
-                  borderRadius: '4px',
-                  padding: '8px 16px',
-                  cursor: 'pointer',
-                  color: '#007bff',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#007bff';
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'none';
-                  e.currentTarget.style.color = '#007bff';
-                }}
+                className="nav-auth-btn"
               >
                 Tizimga kirish
               </button>
               <button
                 onClick={() => onNavigate('register')}
-                style={{
-                  background: '#007bff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '8px 16px',
-                  cursor: 'pointer',
-                  color: 'white',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#0056b3'}
-                onMouseLeave={(e) => e.currentTarget.style.background = '#007bff'}
+                className="nav-auth-btn primary"
               >
                 Ro'yxatdan o'tish
               </button>
@@ -105,30 +79,17 @@ const Navbar = ({ onNavigate, isAdmin, isJournalist, user, onLogout }) => (
         </div>
       </div>
     </div>
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      padding: '16px 32px',
-      background: '#f7f3ec',
-      borderBottom: '1px solid #e0e0e0',
-      fontFamily: 'Inter, Arial, sans-serif',
-      fontWeight: 600,
-      fontSize: '1.1em',
-      marginBottom: '24px',
-      textAlign: 'center',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      <div style={{ display: 'flex', gap: '32px', textAlign: 'center', justifyContent: 'center' }}>
-        <button onClick={() => onNavigate('home')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Asosiy</button>
-        <button onClick={() => onNavigate('newslist')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Yangiliklar</button>
-        <button onClick={() => onNavigate('livescore')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Jonli Natijalar</button>
-        <button onClick={() => onNavigate('poll')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>So'rovnoma</button>
+    <nav className="main-navbar">
+      <div className="main-navbar-btns">
+        <button onClick={() => onNavigate('home')} className={`nav-btn${currentPage === 'home' ? ' active' : ''}`}>Asosiy</button>
+        <button onClick={() => onNavigate('newslist')} className={`nav-btn${currentPage === 'newslist' ? ' active' : ''}`}>Yangiliklar</button>
+        <button onClick={() => onNavigate('livescore')} className={`nav-btn${currentPage === 'livescore' ? ' active' : ''}`}>Jonli Natijalar</button>
+        <button onClick={() => onNavigate('poll')} className={`nav-btn${currentPage === 'poll' ? ' active' : ''}`}>So'rovnoma</button>
         {isAdmin && (
-          <button onClick={() => onNavigate('admin')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Admin Boshqaruvi</button>
+          <button onClick={() => onNavigate('admin')} className={`nav-btn${currentPage === 'admin' ? ' active' : ''}`}>Admin Boshqaruvi</button>
         )}
         {isJournalist && (
-          <button onClick={() => onNavigate('journalist')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Jurnalist Paneli</button>
+          <button onClick={() => onNavigate('journalist')} className={`nav-btn${currentPage === 'journalist' ? ' active' : ''}`}>Jurnalist Paneli</button>
         )}
       </div>
     </nav>

@@ -24,6 +24,11 @@ body {
   padding: 0;
 }
 
+.pages_name{
+  position: absolute;
+  top: 1px;
+}
+
 h1,
 h2,
 h3,
@@ -573,7 +578,7 @@ header{
   position: absolute;
   display: flex;
   flex-direction: column;
-  top: 195px;
+  top: 190px;
   left: 50px;
 }
 

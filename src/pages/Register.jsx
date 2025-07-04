@@ -28,71 +28,40 @@ const Register = ({ onRegister }) => {
   };
 
   return (
-    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '70vh'}}>
-      <form className="block" style={{minWidth: 340, background: '#fff', border: '1.5px solid #1a3a6b', borderRadius: 8, padding: 32, boxShadow: '0 2px 12px #e0e0e0'}} onSubmit={handleSubmit}>
-        <h1 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b', fontSize: '2rem', marginBottom: 18, textAlign: 'center'}}>Ro'yxatdan o'tish</h1>
-        
-        <label style={{fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em'}}>Ismingiz</label>
-        <input type="text" value={name} onChange={e => setName(e.target.value)} style={{width: '100%', padding: 10, margin: '8px 0 18px 0', borderRadius: 4, border: '1.5px solid #d6d3c7', fontSize: '1em'}} />
-        
-        <label style={{fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em'}}>Email</label>
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{width: '100%', padding: 10, margin: '8px 0 18px 0', borderRadius: 4, border: '1.5px solid #d6d3c7', fontSize: '1em'}} />
-        
-        <label style={{fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em'}}>Kim sifatida ro'yxatdan o'tmoqchisiz?</label>
-        <select 
-          value={role} 
-          onChange={e => setRole(e.target.value)}
-          style={{
-            width: '100%',
-            padding: 10,
-            margin: '8px 0 18px 0',
-            borderRadius: 4,
-            border: '1.5px solid #d6d3c7',
-            fontSize: '1em',
-            background: 'white'
-          }}
-        >
+    <div className="auth-page-center">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h1 className="auth-title">Ro'yxatdan o'tish</h1>
+        <label className="auth-label">Ismingiz</label>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} className="auth-input" />
+        <label className="auth-label">Email</label>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="auth-input" />
+        <label className="auth-label">Kim sifatida ro'yxatdan o'tmoqchisiz?</label>
+        <select value={role} onChange={e => setRole(e.target.value)} className="auth-input">
           <option value="user">Foydalanuvchi</option>
           <option value="journalist">Jurnalist</option>
         </select>
-
         {role === 'user' && (
           <>
-            <label style={{fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em'}}>Parol</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={e => setPassword(e.target.value)} 
-              style={{width: '100%', padding: 10, margin: '8px 0 18px 0', borderRadius: 4, border: '1.5px solid #d6d3c7', fontSize: '1em'}} 
-            />
+            <label className="auth-label">Parol</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="auth-input" />
           </>
         )}
-
         {role === 'journalist' && (
           <>
-            <label style={{fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1em'}}>Jurnalist ma'lumotlari</label>
+            <label className="auth-label">Jurnalist ma'lumotlari</label>
             <textarea
               value={journalistInfo}
               onChange={e => setJournalistInfo(e.target.value)}
               placeholder="Iltimos, tajribangiz va malakangiz haqida ma'lumot bering"
-              style={{
-                width: '100%',
-                padding: 10,
-                margin: '8px 0 18px 0',
-                borderRadius: 4,
-                border: '1.5px solid #d6d3c7',
-                fontSize: '1em',
-                minHeight: '100px',
-                resize: 'vertical'
-              }}
+              className="auth-input"
+              style={{ minHeight: '100px', resize: 'vertical' }}
             />
           </>
         )}
-
-        {error && <div style={{color: 'red', marginBottom: 12, fontFamily: 'Inter, Arial, sans-serif'}}>{error}</div>}
-        <button type="submit" style={{width: '100%', background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 4, padding: '12px 0', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1.1em', letterSpacing: 1}}>Ro'yxatdan o'tish</button>
-        <div style={{marginTop: 18, textAlign: 'center', fontFamily: 'Inter, Arial, sans-serif', fontSize: '0.98em'}}>
-          Akkountingiz bormi? <span style={{color: '#1a3a6b', cursor: 'pointer', fontWeight: 600}} onClick={() => onRegister && onRegister('login')}>Tizimga kirish</span>
+        {error && <div className="auth-error">{error}</div>}
+        <button type="submit" className="auth-btn">Ro'yxatdan o'tish</button>
+        <div className="auth-link-block">
+          Akkountingiz bormi? <span className="auth-link" onClick={() => onRegister && onRegister('login')}>Tizimga kirish</span>
         </div>
       </form>
     </div>

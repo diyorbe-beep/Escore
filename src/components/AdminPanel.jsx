@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const initialNews = [
-  { id: 1, title: "Haaland to Real Madrid?", content: "Transfer news...", image: null, status: 'Published', deleted: false },
-  { id: 2, title: "Napoli's Scudetto Push", content: "Napoli are pushing...", image: null, status: 'Draft', deleted: false },
+  { id: 1, title: "Haaland to Real Madrid?", content: "Transfer news...", image: null, status: 'Published', deleted: false, publishedAt: new Date().toISOString() },
+  { id: 2, title: "Napoli's Scudetto Push", content: "Napoli are pushing...", image: null, status: 'Draft', deleted: false, publishedAt: new Date().toISOString() },
 ];
 
 const initialAdmins = [
@@ -11,7 +11,7 @@ const initialAdmins = [
 ];
 
 const AdminPanel = ({ userRole = 'admin' }) => {
-  const [news, setNews] = useState(initialNews);
+  const [news, setNews] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
@@ -21,6 +21,21 @@ const AdminPanel = ({ userRole = 'admin' }) => {
   const [adminName, setAdminName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
   const [adminError, setAdminError] = useState('');
+
+  // Load news from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem('news');
+    if (stored) {
+      setNews(JSON.parse(stored));
+    } else {
+      setNews(initialNews);
+    }
+  }, []);
+
+  // Save news to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('news', JSON.stringify(news));
+  }, [news]);
 
   const handleAdd = e => {
     e.preventDefault();
@@ -34,7 +49,8 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       content,
       image: image ? URL.createObjectURL(image) : null,
       status,
-      deleted: false
+      deleted: false,
+      publishedAt: new Date().toISOString()
     };
     setNews([newNews, ...news]);
     setTitle('');
@@ -65,6 +81,19 @@ const AdminPanel = ({ userRole = 'admin' }) => {
 
   const handleRemoveAdmin = id => {
     setAdmins(admins.filter(a => a.id !== id || a.role === 'superadmin'));
+  };
+
+  // Helper to format date
+  const formatNewsDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleString('uz-UZ', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   return (
@@ -113,6 +142,9 @@ const AdminPanel = ({ userRole = 'admin' }) => {
                 <br />
                 <span style={{fontSize: '0.97em'}}>{n.content}</span>
                 {n.image && <div><img src={n.image} alt="news" style={{maxWidth: 120, marginTop: 6}} /></div>}
+                <div style={{fontSize: '0.92em', color: '#888', marginTop: 2}}>
+                  {n.publishedAt && <>Qo'yilgan vaqti: {formatNewsDate(n.publishedAt)}</>}
+                </div>
               </span>
               <button onClick={() => handleDelete(n.id)} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>O'chirish</button>
             </li>
