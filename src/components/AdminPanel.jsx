@@ -117,7 +117,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       const formData = new FormData();
       formData.append('image', image);
       try {
-        const res = await fetch('http://localhost:5000/api/upload', {
+        const res = await fetch('https://football-new-backend-end.onrender.com/api/upload', {
           method: 'POST',
           body: formData
         });
@@ -253,7 +253,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       const formData = new FormData();
       formData.append('image', image);
       try {
-        const res = await fetch('http://localhost:5000/api/upload', {
+        const res = await fetch('https://football-new-backend-end.onrender.com/api/upload', {
           method: 'POST',
           body: formData
         });
