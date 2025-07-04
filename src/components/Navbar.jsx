@@ -85,7 +85,7 @@ const Navbar = ({ onNavigate, isAdmin, isJournalist, user, onLogout, currentPage
         <button onClick={() => onNavigate('newslist')} className={`nav-btn${currentPage === 'newslist' ? ' active' : ''}`}>Yangiliklar</button>
         <button onClick={() => onNavigate('livescore')} className={`nav-btn${currentPage === 'livescore' ? ' active' : ''}`}>Jonli Natijalar</button>
         <button onClick={() => onNavigate('poll')} className={`nav-btn${currentPage === 'poll' ? ' active' : ''}`}>So'rovnoma</button>
-        {isAdmin && (
+        {(user && (user.role === 'admin' || user.role === 'superadmin')) && (
           <button onClick={() => onNavigate('admin')} className={`nav-btn${currentPage === 'admin' ? ' active' : ''}`}>Admin Boshqaruvi</button>
         )}
         {isJournalist && (

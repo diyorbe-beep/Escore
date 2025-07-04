@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Layout from './components/Layout'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -19,7 +19,10 @@ import TopLeagues from './components/TopLeagues'
 import Advertisement from './components/advertisement'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('user');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [page, setPage] = useState('home')
   const [showAuth, setShowAuth] = useState(false)
   const [authPage, setAuthPage] = useState('login')
@@ -69,6 +72,8 @@ const App = () => {
 
   const handleLogout = () => {
     setUser(null)
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setPage('home')
     setShowAuth(false)
   }
@@ -79,6 +84,13 @@ const App = () => {
       ...updatedData
     }));
   }
+
+  useEffect(() => {
+    // Har bir user o'zgarganda localStorage ga yozamiz
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }, [user]);
 
   // Agar auth sahifasi ochiq bo'lsa
   if (showAuth) {
@@ -94,28 +106,52 @@ const App = () => {
                 setPage(prev);
                 return stack.slice(0, -1);
               });
-            }} style={{padding:'6px 16px',borderRadius:4,border:'1px solid #ccc',background:'#f7f7f7',cursor:'pointer',fontWeight:600}}>&larr; Orqaga</button>
+            }} style={{
+              padding:'8px 24px',
+              borderRadius: '6px',
+              border: 'none',
+              background: 'linear-gradient(90deg, #1a3a6b 0%, #3a7bd5 100%)',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '1em',
+              boxShadow: '0 2px 8px rgba(26,58,107,0.08)',
+              cursor:'pointer',
+              transition: 'background 0.2s',
+              outline: 'none',
+              marginBottom: 8
+            }}>&larr; Orqaga</button>
           )}
         </div>
         {authPage === 'login' && (
           <Login onLogin={u => {
             if (u === 'register') {
               setAuthPage('register')
-            } else {
+            } else if (u) {
               setUser(u)
+              localStorage.setItem('user', JSON.stringify(u));
               setShowAuth(false)
             }
           }} />
         )}
         {authPage === 'register' && (
-          <Register onRegister={u => {
-            if (u === 'login') {
-              setAuthPage('login')
-            } else {
-              setUser(u)
-              setShowAuth(false)
-            }
-          }} />
+          <Register 
+            onRegister={u => {
+              if (u === 'login') {
+                setAuthPage('login')
+              } else if (u) {
+                setUser(u)
+                localStorage.setItem('user', JSON.stringify(u));
+                setShowAuth(false)
+              }
+            }}
+            onLogin={u => {
+              if (u) {
+                setUser(u);
+                localStorage.setItem('user', JSON.stringify(u));
+                setShowAuth(false);
+              }
+            }}
+          />
         )}
       </>
     );
@@ -141,7 +177,7 @@ const App = () => {
       content = <Layout><Poll /></Layout>
       break
     case 'admin':
-      content = user?.role === 'admin' ? <Layout><AdminPanel /></Layout> : <Layout><h2>Ruxsat berilmagan</h2></Layout>
+      content = (user?.role === 'admin' || user?.role === 'superadmin') ? <Layout><AdminPanel userRole={user?.role} /> </Layout> : <Layout><h2>Ruxsat berilmagan</h2></Layout>
       break
     case 'journalist':
       content = user?.role === 'journalist' ? <Layout><JournalistPanel journalistName={user?.name || 'Jurnalist'} /></Layout> : <Layout><h2>Ruxsat berilmagan</h2></Layout>

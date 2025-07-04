@@ -24,7 +24,7 @@ const Home = () => (
         <div className='home-grid-left-top'>
           {/* MAIN IMAGE */}
           <div style={{ gridRow: 1, gridColumn: 2 }}>
-            <img className="home-main-img" src="https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=400&q=80" alt="Haaland" />
+            <img className="home-main-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM7W-KCI9JMFHP-ejNVGNCg5yyrixJ7DN5tvlZ2mh_xmaQvrlie6wm_Cv4E-yg7mgga0A&usqp=CAU" alt="Haaland" />
           </div>
         </div>
 

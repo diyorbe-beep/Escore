@@ -1,30 +1,43 @@
 import React, { useState } from 'react';
+import { userApi } from '../services/ApiService';
 
-const Register = ({ onRegister }) => {
+const Register = ({ onRegister, onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('user'); // 'user', 'journalist'
-  const [journalistInfo, setJournalistInfo] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (!name || !email) {
-      setError('Iltimos, barcha maydonlarni to\'ldiring');
+    if (!name.trim()) {
+      setError('Ism majburiy');
       return;
     }
-    if (role === 'user' && !password) {
-      setError('Iltimos, parolni kiriting');
+    if (!email.trim()) {
+      setError('Email majburiy');
       return;
     }
-    if (role === 'journalist' && !journalistInfo) {
-      setError('Iltimos, jurnalist ma\'lumotlarini kiriting');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setError('Email formati noto‘g‘ri');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError('Parol kamida 6 ta belgidan iborat bo‘lishi kerak');
       return;
     }
     setError('');
-    // Dummy register, real register uchun backendga so'rov yuboriladi
-    onRegister && onRegister({ email, name, role, journalistInfo, password });
+    // Backendga so'rov
+    const res = await userApi.register({ email, name, password });
+    if (res.error) setError(res.error);
+    else {
+      // Avtomatik login
+      const loginRes = await userApi.login({ email, password });
+      if (loginRes && loginRes.user) {
+        onLogin && onLogin(loginRes.user);
+      }
+      setEmail(''); setPassword(''); setName('');
+    }
   };
 
   return (
@@ -35,30 +48,10 @@ const Register = ({ onRegister }) => {
         <input type="text" value={name} onChange={e => setName(e.target.value)} className="auth-input" />
         <label className="auth-label">Email</label>
         <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="auth-input" />
-        <label className="auth-label">Kim sifatida ro'yxatdan o'tmoqchisiz?</label>
-        <select value={role} onChange={e => setRole(e.target.value)} className="auth-input">
-          <option value="user">Foydalanuvchi</option>
-          <option value="journalist">Jurnalist</option>
-        </select>
-        {role === 'user' && (
-          <>
-            <label className="auth-label">Parol</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="auth-input" />
-          </>
-        )}
-        {role === 'journalist' && (
-          <>
-            <label className="auth-label">Jurnalist ma'lumotlari</label>
-            <textarea
-              value={journalistInfo}
-              onChange={e => setJournalistInfo(e.target.value)}
-              placeholder="Iltimos, tajribangiz va malakangiz haqida ma'lumot bering"
-              className="auth-input"
-              style={{ minHeight: '100px', resize: 'vertical' }}
-            />
-          </>
-        )}
+        <label className="auth-label">Parol</label>
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="auth-input" />
         {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success">{success}</div>}
         <button type="submit" className="auth-btn">Ro'yxatdan o'tish</button>
         <div className="auth-link-block">
           Akkountingiz bormi? <span className="auth-link" onClick={() => onRegister && onRegister('login')}>Tizimga kirish</span>

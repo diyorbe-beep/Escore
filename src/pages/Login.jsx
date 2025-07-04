@@ -1,40 +1,39 @@
 import React, { useState } from 'react';
+import { userApi } from '../services/ApiService';
+
+const ADMIN_EMAILS = ['admin@mail.com', 'superadmin@mail.com'];
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (!email) {
-      setError('Iltimos, emailni kiriting');
+    if (!email.trim()) {
+      setError('Email majburiy');
       return;
     }
-
-    // Check if it's admin login
-    const isAdminLogin = email === 'admin@escorenews.com';
-    if (isAdminLogin && !password) {
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      setError('Email formati noto\'g\'ri');
+      return;
+    }
+    const isAdmin = ADMIN_EMAILS.includes(email);
+    if (isAdmin && !password) {
       setError('Admin uchun parol kiritish majburiy');
       return;
     }
-
     setError('');
-    
-    // Determine user role
-    let role = 'user';
-    if (isAdminLogin) {
-      role = 'admin';
-    } else if (email.endsWith('@journalist.escorenews.com')) {
-      role = 'journalist';
+    setLoading(true);
+    const res = await userApi.login({ email, password });
+    setLoading(false);
+    if (res.error) setError(res.error);
+    else {
+      setSuccess('Muvaffaqiyatli tizimga kirdingiz!');
+      onLogin && onLogin(res.user);
     }
-    
-    // Dummy login, real login uchun backendga so'rov yuboriladi
-    onLogin && onLogin({ 
-      email, 
-      role,
-      name: email.split('@')[0], // Dummy name from email
-    });
   };
 
   return (
@@ -49,8 +48,7 @@ const Login = ({ onLogin }) => {
           placeholder="Emailingizni kiriting"
           className="auth-input"
         />
-        
-        {(email === 'admin@escorenews.com') && (
+        {ADMIN_EMAILS.includes(email) && (
           <>
             <label className="auth-label">Parol</label>
             <input 
@@ -62,15 +60,16 @@ const Login = ({ onLogin }) => {
             />
           </>
         )}
-
         {error && <div className="auth-error">{error}</div>}
-        <button type="submit" className="auth-btn">Kirish</button>
+        {success && <div className="auth-success">{success}</div>}
+        <button type="submit" className="auth-btn" disabled={loading}>Kirish</button>
+        {loading && <span style={{marginLeft: 12, color: '#1a3a6b'}}>Yuklanmoqda...</span>}
         <div className="auth-link-block">
           Akkountingiz yo'qmi? <span className="auth-link" onClick={() => onLogin && onLogin('register')}>Ro'yxatdan o'tish</span>
         </div>
         <div className="auth-info">
-          Admin: admin@escorenews.com<br/>
-          Jurnalist: ismingiz@journalist.escorenews.com
+          Superadmin: superadmin@mail.com<br/>
+          Admin: admin@mail.com
         </div>
       </form>
     </div>

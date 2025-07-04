@@ -1,6 +1,6 @@
 import { secureRequest, getAuthHeaders } from './AuthService';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+const API_URL = 'http://localhost:5000/api'; // Backendga yo'naltirildi
 
 // Yangiliklar bilan ishlash
 export const newsApi = {
@@ -12,16 +12,19 @@ export const newsApi = {
 
   // Bitta yangilikni ID bo'yicha olish
   getById: async (id) => {
-    const response = await fetch(`${API_URL}/news/${id}`);
-    return response.json();
+    const response = await fetch(`${API_URL}/news`); // id bo'yicha olish backendda yo'q
+    const all = await response.json();
+    return all.find(n => n.id === id);
   },
 
   // Yangi yangilik qo'shish (faqat admin va jurnalistlar uchun)
   create: async (newsData) => {
-    return secureRequest(`${API_URL}/news`, {
+    const response = await fetch(`${API_URL}/news`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newsData)
     });
+    return response.json();
   },
 
   // Yangilikni tahrirlash
@@ -34,9 +37,10 @@ export const newsApi = {
 
   // Yangilikni o'chirish
   delete: async (id) => {
-    return secureRequest(`${API_URL}/news/${id}`, {
+    const response = await fetch(`${API_URL}/news/${id}`, {
       method: 'DELETE'
     });
+    return response.json();
   }
 };
 
@@ -87,26 +91,31 @@ export const pollApi = {
 
   // Yangi so'rovnoma yaratish
   create: async (pollData) => {
-    return secureRequest(`${API_URL}/polls`, {
+    const response = await fetch(`${API_URL}/polls`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pollData)
     });
+    return response.json();
   },
 
   // So'rovnomada ovoz berish
-  vote: async (pollId, optionId) => {
-    return secureRequest(`${API_URL}/polls/${pollId}/vote`, {
+  vote: async (pollId, option) => {
+    const response = await fetch(`${API_URL}/polls/vote`, {
       method: 'POST',
-      body: JSON.stringify({ optionId })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pollId, option })
     });
+    return response.json();
   }
 };
 
 // Foydalanuvchi profili bilan ishlash
 export const userApi = {
   // Profil ma'lumotlarini olish
-  getProfile: async () => {
-    return secureRequest(`${API_URL}/users/profile`);
+  getProfile: async (id) => {
+    const response = await fetch(`${API_URL}/user/${id}`);
+    return response.json();
   },
 
   // Profil ma'lumotlarini yangilash
@@ -139,6 +148,24 @@ export const userApi = {
       method: 'POST',
       body: JSON.stringify(passwordData)
     });
+  },
+
+  register: async (userData) => {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    return response.json();
+  },
+
+  login: async (userData) => {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    return response.json();
   }
 };
 
@@ -184,5 +211,35 @@ export const notificationApi = {
     return secureRequest(`${API_URL}/notifications/read-all`, {
       method: 'PUT'
     });
+  }
+};
+
+// O'yinlar bilan ishlash
+export const matchApi = {
+  getAll: async () => {
+    const response = await fetch(`${API_URL}/matches`);
+    return response.json();
+  }
+};
+
+// Adminlar bilan ishlash
+export const adminApi = {
+  getAll: async () => {
+    const response = await fetch(`${API_URL}/admins`);
+    return response.json();
+  },
+  create: async (adminData) => {
+    const response = await fetch(`${API_URL}/admins`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(adminData)
+    });
+    return response.json();
+  },
+  delete: async (id) => {
+    const response = await fetch(`${API_URL}/admins/${id}`, {
+      method: 'DELETE'
+    });
+    return response.json();
   }
 }; 

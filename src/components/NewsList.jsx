@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FiEye } from 'react-icons/fi';
+import { newsApi } from '../services/ApiService';
 import './NewsList.scss';
 
 const filters = [
@@ -27,16 +28,21 @@ const truncateText = (text, maxLength) => {
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 };
 
+const getImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `http://localhost:5000${url}`;
+};
+
 const NewsList = ({ onNavigate }) => {
   const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('news');
-    if (stored) {
-      setNews(JSON.parse(stored).filter(n => !n.deleted && n.status === 'Published'));
-    } else {
-      setNews([]);
-    }
+    newsApi.getAll().then(data => {
+      setNews((data || []).filter(n => !n.deleted && n.status === 'Published'));
+      setLoading(false);
+    });
   }, []);
 
   const handleDetailsClick = (newsItem) => {
@@ -62,7 +68,9 @@ const NewsList = ({ onNavigate }) => {
         </div>
       </div>
       <div className="news-container">
-        {news.length === 0 ? (
+        {loading ? (
+          <div className="no-news-message">Yuklanmoqda...</div>
+        ) : news.length === 0 ? (
           <div className="no-news-message">Yangiliklar mavjud emas.</div>
         ) : (
           news.map((newsItem) => (
@@ -70,7 +78,7 @@ const NewsList = ({ onNavigate }) => {
               <div className="news-image">
                 {newsItem.image && (
                   <img
-                    src={newsItem.image}
+                    src={getImageUrl(newsItem.image)}
                     alt={newsItem.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
