@@ -1,8 +1,8 @@
 import React from 'react'
-import './advertisement.scss'
+import './advertisement2.scss'
 import imgs from '../assets/'
 export default function advertisement() {
   return (
-    <div className='advertisement'><img src={imgs.reklama2} alt="" /></div>
+    <div className='advertisement2'><img src={imgs.reklama2} alt="" /></div>
   )
 }

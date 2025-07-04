@@ -27,16 +27,11 @@ const Register = ({ onRegister, onLogin }) => {
       return;
     }
     setError('');
-    // Backendga so'rov
     const res = await userApi.register({ email, name, password });
     if (res.error) setError(res.error);
     else {
-      // Avtomatik login
-      const loginRes = await userApi.login({ email, password });
-      if (loginRes && loginRes.user) {
-        onLogin && onLogin(loginRes.user);
-      }
       setEmail(''); setPassword(''); setName('');
+      setSuccess('Muvaffaqiyatli ro‘yxatdan o‘tdingiz!');
     }
   };
 

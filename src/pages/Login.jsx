@@ -20,11 +20,6 @@ const Login = ({ onLogin }) => {
       setError('Email formati noto\'g\'ri');
       return;
     }
-    const isAdmin = ADMIN_EMAILS.includes(email);
-    if (isAdmin && !password) {
-      setError('Admin uchun parol kiritish majburiy');
-      return;
-    }
     setError('');
     setLoading(true);
     const res = await userApi.login({ email, password });
@@ -35,6 +30,9 @@ const Login = ({ onLogin }) => {
       onLogin && onLogin(res.user);
     }
   };
+
+  // Email to'g'ri formatda bo'lsa va to'ldirilgan bo'lsa, parol inputini ko'rsatamiz
+  const showPassword = email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
 
   return (
     <div className="auth-page-center">
@@ -48,14 +46,14 @@ const Login = ({ onLogin }) => {
           placeholder="Emailingizni kiriting"
           className="auth-input"
         />
-        {ADMIN_EMAILS.includes(email) && (
+        {showPassword && (
           <>
             <label className="auth-label">Parol</label>
             <input 
               type="password" 
               value={password} 
               onChange={e => setPassword(e.target.value)} 
-              placeholder="Admin parolini kiriting"
+              placeholder="Parolingizni kiriting"
               className="auth-input"
             />
           </>
@@ -66,10 +64,6 @@ const Login = ({ onLogin }) => {
         {loading && <span style={{marginLeft: 12, color: '#1a3a6b'}}>Yuklanmoqda...</span>}
         <div className="auth-link-block">
           Akkountingiz yo'qmi? <span className="auth-link" onClick={() => onLogin && onLogin('register')}>Ro'yxatdan o'tish</span>
-        </div>
-        <div className="auth-info">
-          Superadmin: superadmin@mail.com<br/>
-          Admin: admin@mail.com
         </div>
       </form>
     </div>

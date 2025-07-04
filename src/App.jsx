@@ -17,6 +17,7 @@ import UpcomingMatches from './components/UpcomingMatches';
 import FeaturedMatch from './components/FeaturedMatch';
 import TopLeagues from './components/TopLeagues'
 import Advertisement from './components/advertisement'
+import Advertisement2 from './components/advertisement2'
 
 const App = () => {
   const [user, setUser] = useState(() => {
@@ -218,6 +219,7 @@ const App = () => {
         </Layout>
       ) : (
         <>
+          <Advertisement2 />
           <FeaturedMatch />
           <UpcomingMatches />
           <Calendar />

@@ -10,19 +10,5 @@
     },
     "time": "10:00",
     "date": "2000-01-04"
-  },
-  {
-    "id": "dcec9edf-1873-44f4-82aa-fb86ea30029e",
-    "home": {
-      "name": "Roma",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/f/f7/AS_Roma_logo_%282017%29.svg"
-    },
-    "away": {
-      "name": "Ajax",
-      "logo": "https://upload.wikimedia.org/wikipedia/en/7/79/Ajax_Amsterdam.svg"
-    },
-    "time": "18:43",
-    "date": "2025-07-04",
-    "league": "Ligue 1"
   }
 ]

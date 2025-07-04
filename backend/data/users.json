@@ -54,5 +54,12 @@
     "email": "admin@mail.com",
     "password": "admin123",
     "role": "admin"
+  },
+  {
+    "id": "ae6d2e28-882f-46c5-9628-cca64d510453",
+    "name": "asdasdas",
+    "email": "asdadasas@gmail.com",
+    "password": "123456789",
+    "role": "user"
   }
 ]
