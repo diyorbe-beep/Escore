@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import imgs  from '../assets';
+import axios from 'axios';
+import logoDefault from '../assets/logo.png';
 // Mock data for demonstration
 const featuredMatch = {
   home: {
@@ -26,33 +28,42 @@ function getTimeUntilMatch(matchTime) {
 }
 
 const FeaturedMatch = () => {
-  const [timer, setTimer] = useState(getTimeUntilMatch(featuredMatch.time));
+  const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer(getTimeUntilMatch(featuredMatch.time));
-    }, 1000);
-    return () => clearInterval(interval);
+    axios.get('/api/featured-match').then(res => {
+      setMatches(Array.isArray(res.data) ? res.data : []);
+    });
   }, []);
 
+  if (!matches.length) return null;
+
   return (
-    <div className="featured-match-card">
-      <div className="featured-match-title">Featured Match</div>
-      <div className="featured-match-main">
-        <div className="team-block">
-          <img src={featuredMatch.home.logo} alt={featuredMatch.home.name} className="team-logo" />
-          <div className="team-name">{featuredMatch.home.name}</div>
-        </div>
-        <div className="match-info-block">
-          <div className="match-time">{featuredMatch.time}</div>
-          <div className="match-date">5.10.2025</div>
-          <div className="match-timer">{timer}</div>
-        </div>
-        <div className="team-block">
-          <img src={featuredMatch.away.logo} alt={featuredMatch.away.name} className="team-logo" />
-          <div className="team-name">{featuredMatch.away.name}</div>
-        </div>
-      </div>
+    <div className="featured-match-list">
+      {matches.map((match, idx) => {
+        const timer = match.time ? getTimeUntilMatch(match.time) : '';
+        return (
+          <div className="featured-match-card" key={match.id || idx}>
+            <div className="featured-match-title">Featured Match</div>
+            <div className="featured-league">{match.league}</div>
+            <div className="featured-match-main">
+              <div className="team-block">
+                <img src={match.home.logo || logoDefault} alt={match.home.name} className="team-logo" />
+                <div className="team-name">{match.home.name}</div>
+              </div>
+              <div className="match-info-block">
+                <div className="match-time">{match.time}</div>
+                <div className="match-date">{match.date}</div>
+                <div className="match-timer">{timer}</div>
+              </div>
+              <div className="team-block">
+                <img src={match.away.logo || logoDefault} alt={match.away.name} className="team-logo" />
+                <div className="team-name">{match.away.name}</div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

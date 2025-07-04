@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { newsApi, adminApi, pollApi } from '../services/ApiService';
+import axios from 'axios';
+import logoDefault from '../assets/logo.png';
 
 const AdminPanel = ({ userRole = 'admin' }) => {
   const [news, setNews] = useState([]);
@@ -19,18 +21,88 @@ const AdminPanel = ({ userRole = 'admin' }) => {
   const [pollQuestion, setPollQuestion] = useState('');
   const [pollOptions, setPollOptions] = useState(['', '']);
   const [pollError, setPollError] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [categoryName, setCategoryName] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+  const [newsCategory, setNewsCategory] = useState('');
+  const [editId, setEditId] = useState(null);
+  const [homeTeam, setHomeTeam] = useState('');
+  const [awayTeam, setAwayTeam] = useState('');
+  const [matchTime, setMatchTime] = useState('');
+  const [matchDate, setMatchDate] = useState('');
+  const [featuredMsg, setFeaturedMsg] = useState('');
+  const teamList = [
+    'Real Madrid', 'Barcelona', 'Manchester United', 'Liverpool', 'Bayern Munich', 'Juventus', 'Chelsea', 'Arsenal', 'PSG', 'Inter', 'Milan', 'Atletico Madrid', 'Dortmund', 'Tottenham', 'Roma', 'Napoli', 'Ajax', 'Porto', 'Benfica', 'Sevilla', 'Leipzig', 'Leicester City', 'Shakhtar Donetsk', 'Galatasaray', 'Fenerbahce', 'Besiktas'
+  ];
+  const teamLogos = {
+    'Real Madrid': 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg',
+    'Barcelona': 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg',
+    'Manchester United': 'https://upload.wikimedia.org/wikipedia/en/7/7a/Manchester_United_FC_crest.svg',
+    'Liverpool': 'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg',
+    'Bayern Munich': 'https://upload.wikimedia.org/wikipedia/en/1/1f/FC_Bayern_München_logo_%282017%29.svg',
+    'Juventus': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Juventus_FC_2017_logo.svg',
+    'Chelsea': 'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg',
+    'Arsenal': 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
+    'PSG': 'https://upload.wikimedia.org/wikipedia/en/a/a7/Paris_Saint-Germain_F.C..svg',
+    'Inter': 'https://upload.wikimedia.org/wikipedia/commons/0/05/FC_Internazionale_Milano_2021.svg',
+    'Milan': 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg',
+    'Atletico Madrid': 'https://upload.wikimedia.org/wikipedia/en/f/f4/Atletico_Madrid_2017_logo.svg',
+    'Dortmund': 'https://upload.wikimedia.org/wikipedia/commons/6/67/Borussia_Dortmund_logo.svg',
+    'Tottenham': 'https://upload.wikimedia.org/wikipedia/en/b/b4/Tottenham_Hotspur.svg',
+    'Roma': 'https://upload.wikimedia.org/wikipedia/en/f/f7/AS_Roma_logo_%282017%29.svg',
+    'Napoli': 'https://upload.wikimedia.org/wikipedia/commons/2/2d/SSC_Napoli.svg',
+    'Ajax': 'https://upload.wikimedia.org/wikipedia/en/7/79/Ajax_Amsterdam.svg',
+    'Porto': 'https://upload.wikimedia.org/wikipedia/en/3/3f/FC_Porto.svg',
+    'Benfica': 'https://upload.wikimedia.org/wikipedia/en/8/89/SL_Benfica_logo.svg',
+    'Sevilla': 'https://upload.wikimedia.org/wikipedia/en/3/3c/Sevilla_FC_logo.svg',
+    'Leipzig': 'https://upload.wikimedia.org/wikipedia/en/0/04/RB_Leipzig_2014_logo.svg',
+    'Leicester City': 'https://upload.wikimedia.org/wikipedia/en/2/2d/Leicester_City_crest.svg',
+    'Shakhtar Donetsk': 'https://upload.wikimedia.org/wikipedia/commons/6/6e/FC_Shakhtar_Donetsk.svg',
+    'Galatasaray': 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Galatasaray_Sports_Club_Logo.png',
+    'Fenerbahce': 'https://upload.wikimedia.org/wikipedia/commons/9/9b/Fenerbahçe_SK.svg',
+    'Besiktas': 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Besiktas_JK.svg',
+  };
+  const [featuredMatches, setFeaturedMatches] = useState([]);
+  const [editFeatured, setEditFeatured] = useState(false);
+  const leagueList = [
+    'La Liga',
+    'UEFA Champions League',
+    'Premier League',
+    'Serie A',
+    'Bundesliga',
+    'Ligue 1',
+    'Europa League',
+    'Super Lig',
+    'Eredivisie',
+    'Primeira Liga',
+    'UCL',
+    'Jahon chempionati',
+    'Boshqa'
+  ];
+  const [matchLeague, setMatchLeague] = useState('');
 
   // Load news and admins from backend
   useEffect(() => {
     loadNews();
     adminApi.getAll().then(setAdmins);
     pollApi.getAll().then(setPolls);
+    loadCategories();
+    axios.get('/api/featured-match').then(res => setFeaturedMatches(Array.isArray(res.data) ? res.data : []));
   }, []);
 
   const loadNews = () => {
     newsApi.getAll().then(data => {
       setNews((data || []).filter(n => !n.deleted));
     });
+  };
+
+  const loadCategories = async () => {
+    try {
+      const res = await axios.get('/api/categories');
+      setCategories(res.data);
+    } catch (e) {
+      setCategories([]);
+    }
   };
 
   const handleAdd = async e => {
@@ -62,6 +134,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       content,
       image: imageUrl,
       status,
+      category: newsCategory,
     };
     await newsApi.create(newNews);
     setTitle('');
@@ -128,6 +201,89 @@ const AdminPanel = ({ userRole = 'admin' }) => {
     setPollError('');
   };
 
+  const handleDeletePoll = async (id) => {
+    try {
+      await axios.delete(`/api/polls/${id}?role=${userRole}&superadminToken=${superadminToken}`);
+      setPolls(polls.filter(p => p.id !== id));
+    } catch (err) {
+      setPollError("O'chirishda xatolik");
+    }
+  };
+
+  const handleAddCategory = async e => {
+    e.preventDefault();
+    if (!categoryName || !superadminToken) {
+      setCategoryError('Kategoriya nomi va superadmin paroli majburiy');
+      return;
+    }
+    try {
+      const res = await axios.post('/api/categories', { name: categoryName, superadminToken });
+      setCategories([...categories, res.data]);
+      setCategoryName('');
+      setSuperadminToken('');
+      setCategoryError('');
+    } catch (err) {
+      setCategoryError(err.response?.data?.error || 'Xatolik');
+    }
+  };
+
+  const handleDeleteCategory = async (id, token) => {
+    try {
+      await axios.delete(`/api/categories/${id}?superadminToken=${token}`);
+      setCategories(categories.filter(c => c.id !== id));
+    } catch (err) {
+      setCategoryError("O'chirishda xatolik");
+    }
+  };
+
+  const handleEdit = (news) => {
+    setEditId(news.id);
+    setTitle(news.title);
+    setContent(news.content);
+    setImage(null); // eski rasmni o'zgartirmaslik uchun
+    setStatus(news.status);
+    setNewsCategory(news.category || '');
+  };
+
+  const handleSave = async e => {
+    e.preventDefault();
+    setLoading(true);
+    let imageUrl = null;
+    if (image) {
+      const formData = new FormData();
+      formData.append('image', image);
+      try {
+        const res = await fetch('http://localhost:5000/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        imageUrl = data.url;
+      } catch (err) {
+        setError('Rasm yuklashda xatolik');
+        setLoading(false);
+        return;
+      }
+    }
+    const updatedNews = {
+      title,
+      content,
+      image: imageUrl || undefined,
+      status,
+      category: newsCategory,
+    };
+    await newsApi.update(editId, updatedNews);
+    setEditId(null);
+    setTitle('');
+    setContent('');
+    setImage(null);
+    setStatus('Draft');
+    setNewsCategory('');
+    setError('');
+    setLoading(false);
+    loadNews();
+  };
+
   // Helper to format date
   const formatNewsDate = (dateStr) => {
     if (!dateStr) return '';
@@ -139,6 +295,65 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const handleAddFeaturedMatch = async e => {
+    e.preventDefault();
+    if (!homeTeam || !awayTeam || !matchTime || !matchDate || !matchLeague) {
+      setFeaturedMsg('Barcha maydonlar majburiy');
+      return;
+    }
+    try {
+      await axios.post('/api/featured-match', {
+        home: homeTeam,
+        away: awayTeam,
+        time: matchTime,
+        date: matchDate,
+        league: matchLeague
+      });
+      setFeaturedMsg("Featured match qo'shildi!");
+      setHomeTeam('');
+      setAwayTeam('');
+      setMatchTime('');
+      setMatchDate('');
+      setMatchLeague('');
+    } catch (err) {
+      setFeaturedMsg('Xatolik: ' + (err.response?.data?.error || ''));
+    }
+  };
+
+  const handleEditFeatured = (m) => {
+    setHomeTeam(m.home.name);
+    setAwayTeam(m.away.name);
+    setMatchTime(m.time);
+    setMatchDate(m.date);
+    setMatchLeague(m.league);
+    setEditFeatured(m.id);
+  };
+
+  const handleSaveFeatured = async e => {
+    e.preventDefault();
+    try {
+      await axios.put(`/api/featured-match/${editFeatured}`, {
+        home: homeTeam,
+        away: awayTeam,
+        time: matchTime,
+        date: matchDate,
+        league: matchLeague
+      });
+      setFeaturedMsg('Featured match yangilandi!');
+      setEditFeatured(false);
+      setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');
+    } catch (err) {
+      setFeaturedMsg('Xatolik: ' + (err.response?.data?.error || ''));
+    }
+  };
+
+  const handleDeleteFeatured = async (id) => {
+    await axios.delete(`/api/featured-match/${id}`);
+    setFeaturedMsg("Featured match o'chirildi!");
+    setEditFeatured(false);
+    setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');
   };
 
   return (
@@ -170,7 +385,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       )}
       <section style={{margin: '24px 0'}}>
         <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Yangilik qo'shish</h2>
-        <form onSubmit={handleAdd} style={{
+        <form onSubmit={editId ? handleSave : handleAdd} style={{
           marginBottom: 24,
           background: '#f7f9fc',
           borderRadius: 12,
@@ -187,6 +402,12 @@ const AdminPanel = ({ userRole = 'admin' }) => {
               <option value="Draft">Draft</option>
               <option value="Published">Published</option>
             </select>
+            <select value={newsCategory} onChange={e => setNewsCategory(e.target.value)} style={{flex:1, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontFamily: 'Poppins, Arial, sans-serif', fontSize: '1.1em'}}>
+              <option value="">Kategoriya tanlang</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.name}>{cat.name}</option>
+              ))}
+            </select>
             <label style={{flex:1, display:'flex', alignItems:'center', justifyContent:'center', background:'#eaf0fa', color:'#1a3a6b', borderRadius:6, border:'1.5px solid #b5c7e6', padding:'10px 0', fontWeight:600, fontFamily:'Poppins, Arial, sans-serif', cursor:'pointer', transition:'background 0.2s'}}>
               <span style={{pointerEvents:'none'}}>Rasm tanlash</span>
               <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} style={{display:'none'}} />
@@ -194,8 +415,8 @@ const AdminPanel = ({ userRole = 'admin' }) => {
           </div>
           <textarea placeholder="To'liq matn" value={content} onChange={e => setContent(e.target.value)} style={{width: '100%', minHeight: 100, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontSize: '1.08em', fontFamily: 'Poppins, Arial, sans-serif', resize:'vertical'}} />
           <div style={{display:'flex', alignItems:'center', gap:16}}>
-            <button type="submit" style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 28px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1.08em', boxShadow:'0 2px 8px rgba(26,58,107,0.08)', marginTop: 0}} disabled={loading}>Qo'shish</button>
-            {loading && <span style={{color: '#1a3a6b'}}>Yuklanmoqda...</span>}
+            <button type="submit" style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 28px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1.08em', boxShadow:'0 2px 8px rgba(26,58,107,0.08)', marginTop: 0}} disabled={loading}>{editId ? 'Saqlash' : 'Qo\'shish'}</button>
+            {editId && <button type="button" onClick={() => { setEditId(null); setTitle(''); setContent(''); setImage(null); setStatus('Draft'); setNewsCategory(''); setError(''); }} style={{background:'#fff', color:'#1a3a6b', border:'1.5px solid #1a3a6b', borderRadius:6, padding:'12px 18px', marginLeft:8}}>Bekor qilish</button>}
           </div>
         </form>
         {error && <div style={{color: 'red', marginBottom: 12, fontFamily: 'Inter, Arial, sans-serif'}}>{error}</div>}
@@ -212,42 +433,101 @@ const AdminPanel = ({ userRole = 'admin' }) => {
                   {n.publishedAt && <>Qo'yilgan vaqti: {formatNewsDate(n.publishedAt)}</>}
                 </div>
               </span>
-              <button onClick={() => handleDelete(n.id)} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>O'chirish</button>
+              <div style={{display:'flex', gap:8}}>
+                <button onClick={() => handleEdit(n)} style={{background: '#fff', color: '#1a3a6b', border: '1.5px solid #1a3a6b', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>Tahrirlash</button>
+                <button onClick={() => handleDelete(n.id)} style={{background: '#fff', color: '#c00', border: '1px solid #c00', borderRadius: 4, padding: '6px 14px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '0.98em', cursor: 'pointer'}}>O'chirish</button>
+              </div>
             </li>
           ))}
         </ul>
       </section>
-      <section style={{margin: '24px 0'}}>
-        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>So'rovnoma qo'shish</h2>
-        <form onSubmit={handleAddPoll} style={{marginBottom: 16, background:'#f7f9fc', borderRadius:12, boxShadow:'0 2px 8px rgba(26,58,107,0.06)', padding:24, display:'flex', flexDirection:'column', gap:12, border:'1.5px solid #e0e0e0'}}>
-          <input type="text" placeholder="Savol" value={pollQuestion} onChange={e => setPollQuestion(e.target.value)} style={{padding:10, borderRadius:6, border:'1.5px solid #d6d3c7', fontSize:'1.08em', fontFamily:'Poppins, Arial, sans-serif'}} />
+      <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
+        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>So'rovnomalar</h2>
+        <form onSubmit={handleAddPoll} style={{marginBottom: 16, display:'flex', flexWrap:'wrap', gap:8, alignItems:'center'}}>
+          <input type="text" placeholder="Savol" value={pollQuestion} onChange={e => setPollQuestion(e.target.value)} style={{padding:8, minWidth:180}} />
           {pollOptions.map((opt, idx) => (
-            <div key={idx} style={{display:'flex', gap:8, alignItems:'center'}}>
-              <input type="text" placeholder={`Variant ${idx+1}`} value={opt} onChange={e => {
-                const arr = [...pollOptions]; arr[idx] = e.target.value; setPollOptions(arr);
-              }} style={{flex:1, padding:10, borderRadius:6, border:'1.5px solid #d6d3c7', fontSize:'1.08em'}} />
-              {pollOptions.length > 2 && <button type="button" onClick={() => setPollOptions(pollOptions.filter((_,i) => i!==idx))} style={{background:'#fff', color:'#c00', border:'1px solid #c00', borderRadius:4, padding:'4px 10px', cursor:'pointer'}}>-</button>}
+            <input key={idx} type="text" placeholder={`Variant ${idx+1}`} value={opt} onChange={e => {
+              const newOpts = [...pollOptions];
+              newOpts[idx] = e.target.value;
+              setPollOptions(newOpts);
+            }} style={{padding:8, minWidth:120}} />
+          ))}
+          <button type="button" onClick={() => setPollOptions([...pollOptions, ''])} style={{padding:'8px 12px'}}>+</button>
+          <button type="submit" style={{padding:'8px 16px', background:'#1a3a6b', color:'#fff', border:'none', borderRadius:4}}>Qo'shish</button>
+        </form>
+        {pollError && <div style={{color:'red', marginBottom:8}}>{pollError}</div>}
+        <ul style={{listStyle:'none', padding:0}}>
+          {polls.map(poll => (
+            <li key={poll.id} style={{display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #eee', padding:'8px 0'}}>
+              <span>{poll.question}</span>
+              <button onClick={() => handleDeletePoll(poll.id)} style={{background:'#fff', color:'#c00', border:'1px solid #c00', borderRadius:4, padding:'4px 10px', cursor:'pointer'}}>O'chirish</button>
+            </li>
+          ))}
+        </ul>
+      </section>
+      {userRole === 'superadmin' && (
+        <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
+          <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Kategoriya qo'shish</h2>
+          <form onSubmit={handleAddCategory} style={{display:'flex', gap:8, alignItems:'center', marginBottom:8}}>
+            <input type="text" placeholder="Kategoriya nomi" value={categoryName} onChange={e => setCategoryName(e.target.value)} style={{padding:8, minWidth:160}} />
+            <input type="password" placeholder="Superadmin paroli" value={superadminToken} onChange={e => setSuperadminToken(e.target.value)} style={{padding:8, minWidth:160}} />
+            <button type="submit" style={{padding:'8px 16px', background:'#1a3a6b', color:'#fff', border:'none', borderRadius:4}}>Qo'shish</button>
+          </form>
+          {categoryError && <div style={{color:'red', marginBottom:8}}>{categoryError}</div>}
+          <ul style={{listStyle:'none', padding:0}}>
+            {(Array.isArray(categories) ? categories : []).map(cat => (
+              <li key={cat.id} style={{display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #eee', padding:'8px 0'}}>
+                <span>{cat.name}</span>
+                <button
+                  onClick={() => {
+                    const token = prompt("Superadmin parolini kiriting:");
+                    if (token) handleDeleteCategory(cat.id, token);
+                  }}
+                  style={{background:'#fff', color:'#c00', border:'1px solid #c00', borderRadius:4, padding:'4px 10px', cursor:'pointer'}}
+                >
+                  O'chirish
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {userRole === 'superadmin' && (
+        <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
+          <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Featured Match boshqaruvi</h2>
+          {featuredMatches.map(m => (
+            <div key={m.id} style={{display:'flex',alignItems:'center',gap:16,marginBottom:12}}>
+              <img src={m.home.logo || logoDefault} alt={m.home.name} style={{width:40}} />
+              <b>{m.home.name}</b>
+              <span>vs</span>
+              <img src={m.away.logo || logoDefault} alt={m.away.name} style={{width:40}} />
+              <b>{m.away.name}</b>
+              <span>{m.league}</span>
+              <span>{m.date} {m.time}</span>
+              <button onClick={() => handleEditFeatured(m)} style={{marginLeft:12}}>Tahrirlash</button>
+              <button onClick={() => handleDeleteFeatured(m.id)} style={{marginLeft:4, color:'#c00'}}>O'chirish</button>
             </div>
           ))}
-          <button type="button" onClick={() => setPollOptions([...pollOptions, ''])} style={{background:'#eaf0fa', color:'#1a3a6b', border:'1px solid #b5c7e6', borderRadius:4, padding:'4px 10px', fontWeight:600, fontFamily:'Poppins, Arial, sans-serif', cursor:'pointer'}}>+ Variant</button>
-          <button type="submit" style={{background: '#1a3a6b', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 24px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 600, fontSize: '1.08em', marginTop:8}}>Qo'shish</button>
-          {pollError && <div style={{color: 'red', marginTop: 8}}>{pollError}</div>}
-        </form>
-        <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>So'rovnomalar ro'yxati</h2>
-        <ul style={{fontFamily: 'Inter, Arial, sans-serif', fontSize: '1.05em', padding: 0, listStyle: 'none'}}>
-          {polls.map(p => (
-            <li key={p.id} style={{borderBottom: '1px solid #e0e0e0', padding: '10px 0'}}>
-              <b>{p.question}</b>
-              <ul style={{marginTop:4, marginBottom:0, paddingLeft:18}}>
-                {Object.keys(p.votes).map(opt => (
-                  <li key={opt}>{opt} <span style={{color:'#888'}}>({p.votes[opt]} ta ovoz)</span></li>
-                ))}
-              </ul>
-              <div style={{fontSize:'0.92em', color:'#888', marginTop:2}}>{p.createdAt && <>Qo'yilgan vaqti: {new Date(p.createdAt).toLocaleString('uz-UZ')}</>}</div>
-            </li>
-          ))}
-        </ul>
-      </section>
+          <form onSubmit={editFeatured ? handleSaveFeatured : handleAddFeaturedMatch} style={{display:'flex', gap:8, alignItems:'center', marginBottom:8, flexWrap:'wrap'}}>
+            <input list="teams" type="text" placeholder="Home team" value={homeTeam} onChange={e => setHomeTeam(e.target.value)} style={{padding:8, minWidth:160}} />
+            <input list="teams" type="text" placeholder="Away team" value={awayTeam} onChange={e => setAwayTeam(e.target.value)} style={{padding:8, minWidth:160}} />
+            <datalist id="teams">
+              {teamList.map(t => <option key={t} value={t} />)}
+            </datalist>
+            {homeTeam && <img src={teamLogos[homeTeam] || logoDefault} alt={homeTeam} style={{width:32,marginLeft:4}} />}
+            {awayTeam && <img src={teamLogos[awayTeam] || logoDefault} alt={awayTeam} style={{width:32,marginLeft:4}} />}
+            <input type="time" placeholder="Vaqt" value={matchTime} onChange={e => setMatchTime(e.target.value)} style={{padding:8, minWidth:100}} />
+            <input type="date" placeholder="Sana" value={matchDate} onChange={e => setMatchDate(e.target.value)} style={{padding:8, minWidth:120}} />
+            <select value={matchLeague} onChange={e => setMatchLeague(e.target.value)} style={{padding:8, minWidth:140}}>
+              <option value="">Turnir tanlang</option>
+              {leagueList.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <button type="submit" style={{padding:'8px 16px', background:'#1a3a6b', color:'#fff', border:'none', borderRadius:4}}>{editFeatured ? 'Saqlash' : 'Qo\'shish'}</button>
+            {editFeatured && <button type="button" onClick={()=>{setEditFeatured(false); setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');}}>Bekor qilish</button>}
+          </form>
+          {featuredMsg && <div style={{color:'green', marginBottom:8}}>{featuredMsg}</div>}
+        </section>
+      )}
     </div>
   );
 };

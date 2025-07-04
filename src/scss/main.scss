@@ -890,18 +890,29 @@ header{
 }
 
 // Featured Match Styles
+.featured-match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
 .featured-match-card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 8px #e0e6ed;
   padding: 18px 12px 12px 12px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 240px;
+  max-width: 270px;
+  width: 100%;
+  min-width: unset;
+  position: static;
+  top: unset;
+  left: unset;
   position: absolute;
-  top: 195px;
   left: 1070px;
 }
 
@@ -958,7 +969,7 @@ header{
 }
 
 .match-date {
-  font-size: 0.9em;
+  font-size: 0.7em;
   color: var(--color-grey);
   margin-bottom: 2px;
 }

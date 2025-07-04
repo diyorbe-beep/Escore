@@ -30,6 +30,7 @@ const App = () => {
   const [selectedNews, setSelectedNews] = useState(null)
   // Back stack for navigation
   const [pageStack, setPageStack] = useState([]);
+  const [search, setSearch] = useState('');
 
   // Page titles
   const pageTitles = {
@@ -91,6 +92,10 @@ const App = () => {
       localStorage.setItem('user', JSON.stringify(user));
     }
   }, [user]);
+
+  useEffect(() => {
+    setSearch('');
+  }, [page]);
 
   // Agar auth sahifasi ochiq bo'lsa
   if (showAuth) {
@@ -160,10 +165,10 @@ const App = () => {
   let content
   switch (page) {
     case 'home':
-      content = <Layout><Home /></Layout>
+      content = <Layout><Home search={search} /></Layout>
       break
     case 'newslist':
-      content = <Layout><NewsList onNavigate={handleNavigate} /></Layout>
+      content = <Layout><NewsList onNavigate={handleNavigate} search={search} /></Layout>
       break
     case 'newsdetail':
       content = (
@@ -204,13 +209,23 @@ const App = () => {
         user={user}
         onLogout={handleLogout}
         currentPage={page}
+        search={search}
+        setSearch={setSearch}
       />
-      <FeaturedMatch />
-      <UpcomingMatches />
-      <Calendar />
-      <Advertisement />
-      <TopLeagues />
-      {content}
+      {search.trim() ? (
+        <Layout>
+          <NewsList search={search} />
+        </Layout>
+      ) : (
+        <>
+          <FeaturedMatch />
+          <UpcomingMatches />
+          <Calendar />
+          <Advertisement />
+          <TopLeagues />
+          {content}
+        </>
+      )}
     </>
   )
 }

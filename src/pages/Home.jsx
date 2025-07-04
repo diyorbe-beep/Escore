@@ -1,4 +1,6 @@
 import React from 'react';
+import NewsList from '../components/NewsList';
+import FeaturedMatch from '../components/FeaturedMatch';
 
 
 const transfers = [
@@ -7,7 +9,7 @@ const transfers = [
   { title: "Jurgen Klopp Salah's Form", img: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=200&q=80' },
 ];
 
-const Home = () => (
+const Home = ({search}) => (
   <div>
     <div className='escore-header'>
       <hr />
@@ -19,6 +21,7 @@ const Home = () => (
       {/* BREAKING NEWS VERTICAL */}
       <div>
         <div className="vertical-text">KUN YANGILIGI</div>
+        <FeaturedMatch />
       </div>
       <div className='home-grid-left'>
         <div className='home-grid-left-top'>
@@ -77,6 +80,7 @@ const Home = () => (
       </div>
     </div>
     <hr />
+    <NewsList search={search} />
     {/* TRANSFERS */}
     <div style={{ gridRow: 3, gridColumn: 2, gridColumnEnd: 4 }}>
       <div className="section-title">TRANSFERS</div>

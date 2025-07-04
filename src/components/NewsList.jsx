@@ -2,15 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FiEye } from 'react-icons/fi';
 import { newsApi } from '../services/ApiService';
 import './NewsList.scss';
-
-const filters = [
-  { id: 'all', label: 'Barcha yangiliklar' },
-  { id: 'premier-league', label: 'Premier League' },
-  { id: 'la-liga', label: 'La Liga' },
-  { id: 'serie-a', label: 'Serie A' },
-  { id: 'bundesliga', label: 'Bundesliga' },
-  { id: 'champions-league', label: 'Champions League' },
-];
+import axios from 'axios';
 
 const formatNewsDate = (dateStr) => {
   const date = new Date(dateStr);
@@ -34,14 +26,21 @@ const getImageUrl = (url) => {
   return `http://localhost:5000${url}`;
 };
 
-const NewsList = ({ onNavigate }) => {
+const NewsList = ({ onNavigate, search = '' }) => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     newsApi.getAll().then(data => {
-      setNews((data || []).filter(n => !n.deleted && n.status === 'Published'));
+      let allNews = Array.isArray(data) ? data : [];
+      let published = allNews.filter(n => n.status === 'Published' && n.deleted === false);
+      setNews(published.length > 0 ? published : allNews);
       setLoading(false);
+    });
+    axios.get('/api/categories').then(res => {
+      setCategories(res.data || []);
     });
   }, []);
 
@@ -51,18 +50,40 @@ const NewsList = ({ onNavigate }) => {
     }
   };
 
+  const filteredNews = (selectedCategory === 'all' ? news : news.filter(n => n.category === selectedCategory))
+    .filter(n => {
+      const q = search.trim().toLowerCase();
+      if (!q) return true;
+      return (
+        (n.title && n.title.toLowerCase().includes(q)) ||
+        (n.content && n.content.toLowerCase().includes(q)) ||
+        (n.description && n.description.toLowerCase().includes(q)) ||
+        (n.category && n.category.toLowerCase().includes(q))
+      );
+    });
+
   return (
     <div className="news-list">
       <div className="news-header">
         <div className="news-filters">
-          {filters.map(filter => (
+          <button
+            key="all"
+            className="filter-btn"
+            type="button"
+            onClick={() => setSelectedCategory('all')}
+            disabled={selectedCategory === 'all'}
+          >
+            Barcha yangiliklar
+          </button>
+          {categories.map(cat => (
             <button
-              key={filter.id}
+              key={cat.id}
               className="filter-btn"
               type="button"
-              disabled
+              onClick={() => setSelectedCategory(cat.name)}
+              disabled={selectedCategory === cat.name}
             >
-              {filter.label}
+              {cat.name}
             </button>
           ))}
         </div>
@@ -70,10 +91,10 @@ const NewsList = ({ onNavigate }) => {
       <div className="news-container">
         {loading ? (
           <div className="no-news-message">Yuklanmoqda...</div>
-        ) : news.length === 0 ? (
-          <div className="no-news-message">Yangiliklar mavjud emas.</div>
+        ) : filteredNews.length === 0 ? (
+          <div className="no-news-message">{search ? "Bunday yangilik yo'q." : "Yangiliklar mavjud emas."}</div>
         ) : (
-          news.map((newsItem) => (
+          filteredNews.map((newsItem) => (
             <article key={newsItem.id} className="news-card">
               <div className="news-image">
                 {newsItem.image && (
