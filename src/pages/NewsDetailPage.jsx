@@ -313,7 +313,7 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
           </div>
 
           <div className="article-content">
-            {news.content.split('\n\n').map((paragraph, index) => (
+            {(news.content || '').split('\n\n').map((paragraph, index) => (
               <p key={index} className="article-paragraph">
                 {paragraph}
               </p>
@@ -323,7 +323,7 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
           <div className="article-tags">
             <h4>Teglar:</h4>
             <div className="tags-list">
-              {news.tags.map((tag, index) => (
+              {(news.tags || []).map((tag, index) => (
                 <span key={index} className="tag">{tag}</span>
               ))}
             </div>
