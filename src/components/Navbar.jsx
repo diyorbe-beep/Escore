@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import UserProfile from './UserProfile';
 import imgs from '../assets/index';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNavigate }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const goLogin = () => {
     if (onNavigate) onNavigate('login');
@@ -67,6 +68,28 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
             </div>
           </div>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            {/* Hamburger icon for mobile */}
+            <button
+              className="hamburger-menu-btn"
+              aria-label="Open menu"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{
+                display: 'none',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                marginLeft: '8px',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
             {user ? (
               <UserProfile user={user} onLogout={onLogout} />
             ) : (
@@ -88,6 +111,7 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
           </div>
         </div>
       </div>
+      {/* Desktop nav */}
       <nav className="main-navbar">
         <div className="main-navbar-btns">
           <Link to="/" className="nav-btn">Asosiy</Link>
@@ -102,6 +126,61 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
           )}
         </div>
       </nav>
+      {/* Mobile nav menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-navbar-menu" onClick={() => setMobileMenuOpen(false)}>
+          <div className="mobile-navbar-content" onClick={e => e.stopPropagation()}>
+            <button
+              className="close-mobile-menu"
+              aria-label="Yopish"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                fontSize: 28,
+                cursor: 'pointer',
+              }}
+            >
+              ×
+            </button>
+            <div className="mobile-navbar-btns">
+              <Link to="/" className="nav-btn" onClick={() => setMobileMenuOpen(false)}>Asosiy</Link>
+              <Link to="/news" className="nav-btn" onClick={() => setMobileMenuOpen(false)}>Yangiliklar</Link>
+              <Link to="/livescore" className="nav-btn" onClick={() => setMobileMenuOpen(false)}>Jonli Natijalar</Link>
+              <Link to="/poll" className="nav-btn" onClick={() => setMobileMenuOpen(false)}>So'rovnoma</Link>
+              {(user && (user.role === 'admin' || user.role === 'superadmin')) && (
+                <Link to="/admin" className="nav-btn" onClick={() => setMobileMenuOpen(false)}>Admin Boshqaruvi</Link>
+              )}
+              {isJournalist && (
+                <Link to="/journalist" className="nav-btn" onClick={() => setMobileMenuOpen(false)}>Jurnalist Paneli</Link>
+              )}
+              <div style={{ marginTop: 24 }}>
+                {user ? (
+                  <UserProfile user={user} onLogout={onLogout} />
+                ) : (
+                  <>
+                    <button
+                      onClick={() => { goLogin(); setMobileMenuOpen(false); }}
+                      className="nav-auth-btn"
+                    >
+                      Tizimga kirish
+                    </button>
+                    <button
+                      onClick={() => { goRegister(); setMobileMenuOpen(false); }}
+                      className="nav-auth-btn primary"
+                    >
+                      Ro'yxatdan o'tish
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

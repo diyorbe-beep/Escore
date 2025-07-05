@@ -556,6 +556,24 @@ hr {
   }
 }
 
+@media (max-width: 1190px) {
+  .sidebar {
+    display: none !important;
+  }
+  .content {
+    width: 100vw !important;
+    min-width: 0 !important;
+    box-shadow: none !important;
+    padding: 16px 2vw !important;
+    margin: 0 auto !important;
+  }
+  .layout {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+}
+
 .nav_top{
   display: flex;
   align-items: center;
