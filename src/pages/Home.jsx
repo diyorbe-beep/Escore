@@ -21,7 +21,6 @@ const Home = ({search}) => (
       {/* BREAKING NEWS VERTICAL */}
       <div>
         <div className="vertical-text">KUN YANGILIGI</div>
-        <FeaturedMatch />
       </div>
       <div className='home-grid-left'>
         <div className='home-grid-left-top'>

@@ -69,6 +69,12 @@ h3 {
   justify-content: center;
   min-height: 100vh;
   background: var(--color-content);
+  .right{
+    margin-left: 80px;
+  }
+  .left{
+    margin-right: 70px;
+  }
 }
 
 .sidebar {
@@ -76,14 +82,16 @@ h3 {
   min-width: 120px;
   background: transparent;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: center;
+  justify-content: start;
   padding: 24px 0;
   font-family: var(--font-sans2);
   font-size: 1.1em;
   color: var(--color-blue);
   font-weight: 600;
   letter-spacing: 1px;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .content {
@@ -568,11 +576,8 @@ header{
   padding: 16px;
   margin-bottom: 18px;
   font-family: var(--font-sans2);
-  position: absolute;
   display: flex;
   flex-direction: column;
-  top: 190px;
-  left: 50px;
 }
 
 .calendar-header {
@@ -893,7 +898,7 @@ header{
 .featured-match-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 15px;
   align-items: center;
 }
 
@@ -906,14 +911,9 @@ header{
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 270px;
+  max-width: 250px;
   width: 100%;
   min-width: unset;
-  position: static;
-  top: unset;
-  left: unset;
-  position: absolute;
-  left: 1070px;
 }
 
 .featured-match-title {
@@ -962,14 +962,14 @@ header{
 }
 
 .match-time {
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight: 700;
   color: var(--color-blue);
   margin-bottom: 2px;
 }
 
 .match-date {
-  font-size: 0.7em;
+  font-size: 0.5em;
   color: var(--color-grey);
   margin-bottom: 2px;
 }

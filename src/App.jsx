@@ -12,12 +12,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import JournalistPanel from './components/JournalistPanel'
 import ProfileSettings from './components/ProfileSettings'
-import Calendar from './components/Calendar';
-import UpcomingMatches from './components/UpcomingMatches';
-import FeaturedMatch from './components/FeaturedMatch';
-import TopLeagues from './components/TopLeagues'
-import Advertisement from './components/advertisement'
-import Advertisement2 from './components/advertisement2'
+  
 
 const App = () => {
   const [user, setUser] = useState(() => {
@@ -219,12 +214,6 @@ const App = () => {
         </Layout>
       ) : (
         <>
-          <Advertisement2 />
-          <FeaturedMatch />
-          <UpcomingMatches />
-          <Calendar />
-          <Advertisement />
-          <TopLeagues />
           {content}
         </>
       )}
