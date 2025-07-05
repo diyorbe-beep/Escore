@@ -1,6 +1,6 @@
 import { secureRequest, getAuthHeaders } from './AuthService';
 
-const API_URL = 'http://localhost:5000/api'; // Local backendga yo'naltirildi
+const API_URL = 'https://football-new-backend-end.onrender.com/api'; // Local backendga yo'naltirildi
 
 // Yangiliklar bilan ishlash
 export const newsApi = {
