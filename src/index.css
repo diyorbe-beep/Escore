@@ -388,3 +388,24 @@ body{
     width: 100%;
   }
 }
+@media (max-width: 800px) {
+  .nav_top {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    .nav_logo {
+      gap: 10px;
+    }
+  }
+}
+
+@media (max-width: 675px) {
+  .nav_top {
+    .nav_inputs {
+      display: none;
+    }
+  }
+}

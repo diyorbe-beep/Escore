@@ -20,7 +20,7 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
         <div className='nav_top'>
           <div className="nav_logo">
             <h2>Escore</h2>
-            <div className="nav_inputs">
+            <div className="nav_inputs hide-on-mobile">
               <form className="form" onSubmit={e => e.preventDefault()}>
                 <button type="submit">
                   {/* ...search icon svg... */}

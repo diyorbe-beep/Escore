@@ -1100,9 +1100,20 @@ header {
   margin-top: 2px;
 }
 
-@media (max-width: 1190px) {
-  .nav_logo {
-    gap: 0;
-    padding: 10px 0;
+@media (max-width: 800px) {
+  .mobile-search-bar {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin: 10px 0 18px 0 !important;
+    padding: 0 8px !important;
+  }
+  .mobile-search-bar .form {
+    width: 100% !important;
+    max-width: 400px !important;
+    border-radius: 24px !important;
+    box-shadow: 0 2px 12px rgba(26, 58, 107, 0.07) !important;
+    background: #fff !important;
+    padding: 0 8px !important;
   }
 }
