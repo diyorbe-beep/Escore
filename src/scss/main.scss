@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&family=Poppins:wght@600&display=swap');
-@import '../components/LiveScore.scss';
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&family=Poppins:wght@600&display=swap");
+@import "../components/LiveScore.scss";
 
 :root {
-  --font-serif: 'Playfair Display', serif;
-  --font-sans: 'Inter', Arial, sans-serif;
-  --font-sans2: 'Poppins', Arial, sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", Arial, sans-serif;
+  --font-sans2: "Poppins", Arial, sans-serif;
   --color-bg: #f7f3ec;
   --color-content: #fff;
   --color-black: #181818;
@@ -24,7 +24,7 @@ body {
   padding: 0;
 }
 
-.pages_name{
+.pages_name {
   position: absolute;
   top: 1px;
 }
@@ -69,10 +69,10 @@ h3 {
   justify-content: center;
   min-height: 100vh;
   background: var(--color-content);
-  .right{
+  .right {
     margin-left: 80px;
   }
-  .left{
+  .left {
     margin-right: 70px;
   }
 }
@@ -214,7 +214,7 @@ small {
   padding-inline: 1em;
   border-radius: var(--border-radius);
   background: var(--input-bg);
-  box-shadow: 0 2px 12px rgba(26,58,107,0.07);
+  box-shadow: 0 2px 12px rgba(26, 58, 107, 0.07);
   border: 1.5px solid #e0e0e0;
   transition: border 0.3s, box-shadow 0.3s, border-radius 0.5s;
 }
@@ -237,7 +237,7 @@ small {
 /* styling of animated border */
 .form:focus-within {
   border: 2px solid var(--border-color);
-  box-shadow: 0 4px 16px rgba(26,58,107,0.13);
+  box-shadow: 0 4px 16px rgba(26, 58, 107, 0.13);
   border-radius: var(--after-border-radius);
 }
 
@@ -259,7 +259,7 @@ input:focus {
 }
 
 /* close button shown when typing */
-input:not(:placeholder-shown)~.reset {
+input:not(:placeholder-shown) ~ .reset {
   opacity: 1;
   visibility: visible;
 }
@@ -269,7 +269,7 @@ input:not(:placeholder-shown)~.reset {
   width: 20px;
   height: 20px;
   margin-top: 2px;
-} 
+}
 
 .escore-sub-logo {
   font-family: var(--font-serif);
@@ -296,7 +296,7 @@ input:not(:placeholder-shown)~.reset {
   user-select: none;
 }
 
-.featured-news-image{
+.featured-news-image {
   width: 260px;
   height: 320px;
   object-fit: cover;
@@ -574,29 +574,23 @@ hr {
   }
 }
 
-.nav_top{
+.nav_top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #f7f3ec;
-  .nav_logo{
+  .nav_logo {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    gap: 330px;
-    .nav_logo{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      h2{
-        margin-right: 30px;
-      }
+    gap: 200px;
+    h2 {
+      margin-right: 30px;
     }
   }
 }
 
-
-header{
+header {
   background-color: #f7f3ec;
 }
 
@@ -716,9 +710,15 @@ header{
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .match-indicator {
@@ -770,8 +770,14 @@ header{
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0.5; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.5;
+  }
 }
 
 .match-teams {
@@ -1038,13 +1044,13 @@ header{
   padding-inline: 1em;
   border-radius: var(--border-radius);
   background: var(--input-bg);
-  box-shadow: 0 2px 12px rgba(26,58,107,0.07);
+  box-shadow: 0 2px 12px rgba(26, 58, 107, 0.07);
   border: 1.5px solid #e0e0e0;
   transition: border 0.3s, box-shadow 0.3s, border-radius 0.5s;
 }
 .form:focus-within {
   border: 2px solid var(--border-color);
-  box-shadow: 0 4px 16px rgba(26,58,107,0.13);
+  box-shadow: 0 4px 16px rgba(26, 58, 107, 0.13);
   border-radius: var(--after-border-radius);
 }
 .input {
@@ -1084,7 +1090,7 @@ header{
   visibility: hidden;
   transition: opacity 0.2s;
 }
-.input:not(:placeholder-shown)~.reset {
+.input:not(:placeholder-shown) ~ .reset {
   opacity: 1;
   visibility: visible;
 }
@@ -1092,4 +1098,11 @@ header{
   width: 20px;
   height: 20px;
   margin-top: 2px;
+}
+
+@media (max-width: 1190px) {
+  .nav_logo {
+    gap: 0;
+    padding: 10px 0;
+  }
 }
