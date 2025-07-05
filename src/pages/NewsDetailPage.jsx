@@ -1,50 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { FiArrowLeft, FiShare2, FiBookmark, FiMessageCircle, FiClock, FiUser, FiEye } from 'react-icons/fi';
 import { footballNewsApi, formatNewsDate } from '../services/FootballNewsService';
+import { useParams } from 'react-router-dom';
+import { newsApi } from '../services/ApiService';
 import './NewsDetailPage.scss';
+import axios from 'axios';
 
-const NewsDetailPage = ({ newsId }) => {
-  const [article, setArticle] = useState(null);
+const NewsDetailPage = () => {
+  const { id } = useParams();
+  const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [relatedNews, setRelatedNews] = useState([]);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [commentAuthor, setCommentAuthor] = useState('');
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [commentError, setCommentError] = useState('');
 
   useEffect(() => {
-    if (newsId) {
-      fetchArticleDetails();
-      fetchRelatedNews();
-    }
-  }, [newsId]);
-
-  const fetchArticleDetails = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Try to get article from API first
-      const newsData = await footballNewsApi.getLatestNews(1, 20);
-      const foundArticle = newsData.find(item => item.id === parseInt(newsId) || item.title.includes(newsId));
-      
-      if (foundArticle) {
-        setArticle({
-          ...foundArticle,
-          readTime: calculateReadTime(foundArticle.content || foundArticle.description),
-          views: Math.floor(Math.random() * 50000) + 1000,
-          author: foundArticle.author || 'Futbol Muharriri',
-          category: getNewsCategory(foundArticle.title),
-          tags: extractTags(foundArticle.title, foundArticle.description)
-        });
-      } else {
-        // Use fallback article if not found
-        setArticle(getFallbackArticle(newsId));
-      }
-    } catch (err) {
-      setError('Maqola yuklanayotganda xatolik yuz berdi');
-      setArticle(getFallbackArticle(newsId));
-    } finally {
+    newsApi.getById(id).then(data => {
+      setNews(data);
       setLoading(false);
+    });
+    fetchComments();
+    // eslint-disable-next-line
+  }, [id]);
+
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(`/api/news/${id}/comments`);
+      setComments(res.data.reverse());
+    } catch (err) {
+      setComments([]);
     }
   };
 
@@ -214,18 +201,35 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
     return tags.slice(0, 5);
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (newComment.trim()) {
-      const comment = {
-        id: comments.length + 1,
-        author: "Foydalanuvchi",
-        text: newComment,
-        time: "Hozir",
-        likes: 0
-      };
-      setComments([comment, ...comments]);
+    if (!commentAuthor.trim() || !newComment.trim()) {
+      setCommentError('Ism va izoh majburiy');
+      return;
+    }
+    setCommentLoading(true);
+    setCommentError('');
+    try {
+      await axios.post(`/api/news/${id}/comments`, {
+        author: commentAuthor,
+        text: newComment
+      });
       setNewComment('');
+      fetchComments();
+    } catch (err) {
+      setCommentError('Izoh yuborishda xatolik');
+    } finally {
+      setCommentLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm('Izohni o‘chirishni istaysizmi?')) return;
+    try {
+      await axios.delete(`/api/news/${id}/comments/${commentId}`);
+      fetchComments();
+    } catch (err) {
+      alert('O‘chirishda xatolik');
     }
   };
 
@@ -251,25 +255,11 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
     );
   }
 
-  if (error && !article) {
+  if (!news) {
     return (
       <div className="news-detail-page">
         <div className="error-state">
-          <div className="error-text">{error}</div>
-          <button className="back-btn" onClick={() => window.history.back()}>
-            <FiArrowLeft />
-            Orqaga qaytish
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!article) {
-    return (
-      <div className="news-detail-page">
-        <div className="error-state">
-          <div className="error-text">Maqola topilmadi</div>
+          <div className="error-text">Yangilik topilmadi</div>
           <button className="back-btn" onClick={() => window.history.back()}>
             <FiArrowLeft />
             Orqaga qaytish
@@ -294,36 +284,36 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
       <div className="article-container">
         <article className="main-article">
           <div className="article-header">
-            <div className="article-category">{article.category}</div>
-            <h1 className="article-title">{article.title}</h1>
+            <div className="article-category">{news.category}</div>
+            <h1 className="article-title">{news.title}</h1>
             <div className="article-meta">
               <div className="meta-item">
                 <FiUser />
-                <span>{article.author}</span>
+                <span>{news.author}</span>
               </div>
               <div className="meta-item">
                 <FiClock />
-                <span>{formatNewsDate(article.publishedAt)}</span>
+                <span>{formatNewsDate(news.publishedAt)}</span>
               </div>
               <div className="meta-item">
                 <FiEye />
-                <span>O'qish vaqti: {article.readTime}</span>
+                <span>O'qish vaqti: {news.readTime}</span>
               </div>
               <div className="meta-item">
-                <span>Ko'rishlar: {article.views}</span>
+                <span>Ko'rishlar: {news.views}</span>
               </div>
             </div>
           </div>
 
           <div className="article-image">
-            <img src={article.image} alt={article.title} />
+            <img src={news.image} alt={news.title} />
             <div className="image-caption">
-              {article.title}
+              {news.title}
             </div>
           </div>
 
           <div className="article-content">
-            {article.content.split('\n\n').map((paragraph, index) => (
+            {news.content.split('\n\n').map((paragraph, index) => (
               <p key={index} className="article-paragraph">
                 {paragraph}
               </p>
@@ -333,7 +323,7 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
           <div className="article-tags">
             <h4>Teglar:</h4>
             <div className="tags-list">
-              {article.tags.map((tag, index) => (
+              {news.tags.map((tag, index) => (
                 <span key={index} className="tag">{tag}</span>
               ))}
             </div>
@@ -392,33 +382,37 @@ Bu transfer bozorida eng katta harakatlardan biri bo'lishi mumkin. Mbappe qaysi 
 
       <section className="comments-section">
         <h3>Izohlar ({comments.length})</h3>
-        
         <form className="comment-form" onSubmit={handleCommentSubmit}>
+          <input
+            type="text"
+            value={commentAuthor}
+            onChange={e => setCommentAuthor(e.target.value)}
+            placeholder="Ismingiz"
+            className="comment-author-input"
+            disabled={commentLoading}
+          />
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Izohingizni yozing..."
             rows="3"
+            disabled={commentLoading}
           />
-          <button type="submit" className="submit-comment">
-            Izoh qoldirish
+          <button type="submit" className="submit-comment" disabled={commentLoading}>
+            {commentLoading ? 'Yuborilmoqda...' : 'Izoh qoldirish'}
           </button>
         </form>
-
+        {commentError && <div className="auth-error" style={{marginTop:8}}>{commentError}</div>}
         <div className="comments-list">
+          {comments.length === 0 && <div style={{color:'#888',padding:'12px'}}>Hali izoh yo‘q</div>}
           {comments.map(comment => (
             <div key={comment.id} className="comment">
               <div className="comment-header">
                 <span className="comment-author">{comment.author}</span>
-                <span className="comment-time">{comment.time}</span>
+                <span className="comment-time">{new Date(comment.createdAt).toLocaleString('uz-UZ')}</span>
+                <button className="delete-comment-btn" onClick={() => handleDeleteComment(comment.id)} style={{marginLeft:8, color:'#c00', background:'none', border:'none', cursor:'pointer'}}>O‘chirish</button>
               </div>
               <div className="comment-text">{comment.text}</div>
-              <div className="comment-actions">
-                <button className="like-btn">
-                  👍 {comment.likes}
-                </button>
-                <button className="reply-btn">Javob berish</button>
-              </div>
             </div>
           ))}
         </div>

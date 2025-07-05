@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import Layout from './components/Layout'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -13,6 +14,28 @@ import Register from './pages/Register'
 import JournalistPanel from './components/JournalistPanel'
 import ProfileSettings from './components/ProfileSettings'
   
+
+const LoginWrapper = ({ setUser }) => {
+  const navigate = useNavigate();
+  return <Login onLogin={u => {
+    if (u) {
+      setUser(u);
+      localStorage.setItem('user', JSON.stringify(u));
+      navigate('/');
+    }
+  }} />;
+};
+
+const RegisterWrapper = ({ setUser }) => {
+  const navigate = useNavigate();
+  return <Register onLogin={u => {
+    if (u) {
+      setUser(u);
+      localStorage.setItem('user', JSON.stringify(u));
+      navigate('/');
+    }
+  }} />;
+};
 
 const App = () => {
   const [user, setUser] = useState(() => {
@@ -124,35 +147,10 @@ const App = () => {
           )}
         </div>
         {authPage === 'login' && (
-          <Login onLogin={u => {
-            if (u === 'register') {
-              setAuthPage('register')
-            } else if (u) {
-              setUser(u)
-              localStorage.setItem('user', JSON.stringify(u));
-              setShowAuth(false)
-            }
-          }} />
+          <LoginWrapper setUser={setUser} />
         )}
         {authPage === 'register' && (
-          <Register 
-            onRegister={u => {
-              if (u === 'login') {
-                setAuthPage('login')
-              } else if (u) {
-                setUser(u)
-                localStorage.setItem('user', JSON.stringify(u));
-                setShowAuth(false)
-              }
-            }}
-            onLogin={u => {
-              if (u) {
-                setUser(u);
-                localStorage.setItem('user', JSON.stringify(u));
-                setShowAuth(false);
-              }
-            }}
-          />
+          <RegisterWrapper setUser={setUser} />
         )}
       </>
     );
@@ -161,7 +159,7 @@ const App = () => {
   let content
   switch (page) {
     case 'home':
-      content = <Layout><Home search={search} /></Layout>
+      content = <Layout><Home search={search} onNavigate={handleNavigate} /></Layout>
       break
     case 'newslist':
       content = <Layout><NewsList onNavigate={handleNavigate} search={search} /></Layout>
@@ -197,27 +195,22 @@ const App = () => {
   }
 
   return (
-    <>
-      <Navbar
-        onNavigate={handleNavigate}
-        isAdmin={user?.role === 'admin'}
-        isJournalist={user?.role === 'journalist'}
-        user={user}
-        onLogout={handleLogout}
-        currentPage={page}
-        search={search}
-        setSearch={setSearch}
-      />
-      {search.trim() ? (
-        <Layout>
-          <NewsList search={search} />
-        </Layout>
-      ) : (
-        <>
-          {content}
-        </>
-      )}
-    </>
+    <Router>
+      <Layout user={user} onLogout={handleLogout} search={search} setSearch={setSearch}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/news" element={<NewsList />} />
+          <Route path="/news/:id" element={<NewsDetailPage />} />
+          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/livescore" element={<LiveScore />} />
+          <Route path="/poll" element={<Poll />} />
+          <Route path="/journalist" element={<JournalistPanel />} />
+          <Route path="/settings" element={<ProfileSettings />} />
+          <Route path="/login" element={<LoginWrapper setUser={setUser} />} />
+          <Route path="/register" element={<RegisterWrapper setUser={setUser} />} />
+        </Routes>
+      </Layout>
+    </Router>
   )
 }
 

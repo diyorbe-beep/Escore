@@ -3,6 +3,7 @@ import { FiEye } from 'react-icons/fi';
 import { newsApi } from '../services/ApiService';
 import './NewsList.scss';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const formatNewsDate = (dateStr) => {
   const date = new Date(dateStr);
@@ -26,11 +27,12 @@ const getImageUrl = (url) => {
   return `https://football-new-backend-end.onrender.com${url}`;
 };
 
-const NewsList = ({ onNavigate, search = '' }) => {
+const NewsList = ({ search = '' }) => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const navigate = useNavigate();
 
   useEffect(() => {
     newsApi.getAll().then(data => {
@@ -45,9 +47,7 @@ const NewsList = ({ onNavigate, search = '' }) => {
   }, []);
 
   const handleDetailsClick = (newsItem) => {
-    if (onNavigate) {
-      onNavigate('newsdetail', newsItem);
-    }
+    navigate(`/news/${newsItem.id}`);
   };
 
   const filteredNews = (selectedCategory === 'all' ? news : news.filter(n => n.category === selectedCategory))

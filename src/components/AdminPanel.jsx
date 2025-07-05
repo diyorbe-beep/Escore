@@ -21,6 +21,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
   const [pollQuestion, setPollQuestion] = useState('');
   const [pollOptions, setPollOptions] = useState(['', '']);
   const [pollError, setPollError] = useState('');
+  const [pollLoading, setPollLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState('');
   const [categoryError, setCategoryError] = useState('');
@@ -31,6 +32,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
   const [matchTime, setMatchTime] = useState('');
   const [matchDate, setMatchDate] = useState('');
   const [featuredMsg, setFeaturedMsg] = useState('');
+  const [isFeatured, setIsFeatured] = useState(false);
   const teamList = [
     'Real Madrid', 'Barcelona', 'Manchester United', 'Liverpool', 'Bayern Munich', 'Juventus', 'Chelsea', 'Arsenal', 'PSG', 'Inter', 'Milan', 'Atletico Madrid', 'Dortmund', 'Tottenham', 'Roma', 'Napoli', 'Ajax', 'Porto', 'Benfica', 'Sevilla', 'Leipzig', 'Leicester City', 'Shakhtar Donetsk', 'Galatasaray', 'Fenerbahce', 'Besiktas'
   ];
@@ -64,6 +66,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
   };
   const [featuredMatches, setFeaturedMatches] = useState([]);
   const [editFeatured, setEditFeatured] = useState(false);
+  const [featuredLoading, setFeaturedLoading] = useState(false);
   const leagueList = [
     'La Liga',
     'UEFA Champions League',
@@ -87,8 +90,17 @@ const AdminPanel = ({ userRole = 'admin' }) => {
     adminApi.getAll().then(setAdmins);
     pollApi.getAll().then(setPolls);
     loadCategories();
-    axios.get('/api/featured-match').then(res => setFeaturedMatches(Array.isArray(res.data) ? res.data : []));
+    loadFeaturedMatches();
   }, []);
+
+  const loadFeaturedMatches = () => {
+    axios.get('/api/featured-match').then(res => {
+      setFeaturedMatches(Array.isArray(res.data) ? res.data : []);
+    }).catch(err => {
+      console.error('Featured matches yuklashda xatolik:', err);
+      setFeaturedMatches([]);
+    });
+  };
 
   const loadNews = () => {
     newsApi.getAll().then(data => {
@@ -135,6 +147,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       image: imageUrl,
       status,
       category: newsCategory,
+      isFeatured,
     };
     await newsApi.create(newNews);
     setTitle('');
@@ -183,22 +196,36 @@ const AdminPanel = ({ userRole = 'admin' }) => {
     pollApi.getAll().then(setPolls);
   };
 
+  const handleRemovePollOption = (index) => {
+    if (pollOptions.length > 2) {
+      const newOpts = pollOptions.filter((_, idx) => idx !== index);
+      setPollOptions(newOpts);
+    }
+  };
+
   const handleAddPoll = async e => {
     e.preventDefault();
     if (!pollQuestion || pollOptions.filter(opt => opt.trim()).length < 2) {
       setPollError('Savol va kamida 2 ta variant majburiy');
       return;
     }
-    const options = pollOptions.map(opt => opt.trim()).filter(Boolean);
-    const created = await pollApi.create({ question: pollQuestion, options, role: userRole });
-    if (created.error) {
-      setPollError(created.error);
-      return;
+    setPollLoading(true);
+    try {
+      const options = pollOptions.map(opt => opt.trim()).filter(Boolean);
+      const created = await pollApi.create({ question: pollQuestion, options, role: userRole });
+      if (created.error) {
+        setPollError(created.error);
+        return;
+      }
+      setPolls([created, ...polls]);
+      setPollQuestion('');
+      setPollOptions(['', '']);
+      setPollError('');
+    } catch (err) {
+      setPollError('So\'rovnoma qo\'shishda xatolik yuz berdi');
+    } finally {
+      setPollLoading(false);
     }
-    setPolls([created, ...polls]);
-    setPollQuestion('');
-    setPollOptions(['', '']);
-    setPollError('');
   };
 
   const handleDeletePoll = async (id) => {
@@ -243,6 +270,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
     setImage(null); // eski rasmni o'zgartirmaslik uchun
     setStatus(news.status);
     setNewsCategory(news.category || '');
+    setIsFeatured(!!news.isFeatured);
   };
 
   const handleSave = async e => {
@@ -271,6 +299,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       image: imageUrl || undefined,
       status,
       category: newsCategory,
+      isFeatured,
     };
     await newsApi.update(editId, updatedNews);
     setEditId(null);
@@ -303,6 +332,11 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       setFeaturedMsg('Barcha maydonlar majburiy');
       return;
     }
+    if (homeTeam === awayTeam) {
+      setFeaturedMsg('Uy va mehmon jamoalari bir xil bo\'lishi mumkin emas');
+      return;
+    }
+    setFeaturedLoading(true);
     try {
       await axios.post('/api/featured-match', {
         home: homeTeam,
@@ -317,8 +351,12 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       setMatchTime('');
       setMatchDate('');
       setMatchLeague('');
+      // Featured matches ro'yxatini yangilash
+      loadFeaturedMatches();
     } catch (err) {
       setFeaturedMsg('Xatolik: ' + (err.response?.data?.error || ''));
+    } finally {
+      setFeaturedLoading(false);
     }
   };
 
@@ -333,6 +371,11 @@ const AdminPanel = ({ userRole = 'admin' }) => {
 
   const handleSaveFeatured = async e => {
     e.preventDefault();
+    if (homeTeam === awayTeam) {
+      setFeaturedMsg('Uy va mehmon jamoalari bir xil bo\'lishi mumkin emas');
+      return;
+    }
+    setFeaturedLoading(true);
     try {
       await axios.put(`/api/featured-match/${editFeatured}`, {
         home: homeTeam,
@@ -344,17 +387,35 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       setFeaturedMsg('Featured match yangilandi!');
       setEditFeatured(false);
       setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');
+      // Featured matches ro'yxatini yangilash
+      loadFeaturedMatches();
     } catch (err) {
       setFeaturedMsg('Xatolik: ' + (err.response?.data?.error || ''));
+    } finally {
+      setFeaturedLoading(false);
     }
   };
 
   const handleDeleteFeatured = async (id) => {
-    await axios.delete(`/api/featured-match/${id}`);
-    setFeaturedMsg("Featured match o'chirildi!");
-    setEditFeatured(false);
-    setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');
+    setFeaturedLoading(true);
+    try {
+      await axios.delete(`/api/featured-match/${id}`);
+      setFeaturedMsg("Featured match o'chirildi!");
+      setEditFeatured(false);
+      setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');
+      // Featured matches ro'yxatini yangilash
+      loadFeaturedMatches();
+    } catch (err) {
+      setFeaturedMsg('O\'chirishda xatolik: ' + (err.response?.data?.error || ''));
+    } finally {
+      setFeaturedLoading(false);
+    }
   };
+
+  function truncateText(text, maxLength = 200) {
+    if (!text) return '';
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+  }
 
   return (
     <div className="block" style={{padding: '32px', background: '#fff', maxWidth: 700, margin: '0 auto'}}>
@@ -412,6 +473,10 @@ const AdminPanel = ({ userRole = 'admin' }) => {
               <span style={{pointerEvents:'none'}}>Rasm tanlash</span>
               <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} style={{display:'none'}} />
             </label>
+            <div style={{display:'flex', alignItems:'center', gap:8}}>
+              <input type="checkbox" id="isFeatured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} />
+              <label htmlFor="isFeatured" style={{fontSize:'1em', color:'#1a3a6b', fontWeight:600, cursor:'pointer'}}>Kun yangiligi</label>
+            </div>
           </div>
           <textarea placeholder="To'liq matn" value={content} onChange={e => setContent(e.target.value)} style={{width: '100%', minHeight: 100, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontSize: '1.08em', fontFamily: 'Poppins, Arial, sans-serif', resize:'vertical'}} />
           <div style={{display:'flex', alignItems:'center', gap:16}}>
@@ -427,7 +492,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
               <span>
                 <b>{n.title}</b> <span style={{color: '#888', fontSize: '0.95em'}}>({n.status})</span>
                 <br />
-                <span style={{fontSize: '0.97em'}}>{n.content}</span>
+                <span className="news-content-preview" style={{display:'block', maxWidth:400, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'pre-line', wordBreak:'break-word'}}>{truncateText(n.content, 200)}</span>
                 {n.image && <div><img src={n.image} alt="news" style={{maxWidth: 120, marginTop: 6}} /></div>}
                 <div style={{fontSize: '0.92em', color: '#888', marginTop: 2}}>
                   {n.publishedAt && <>Qo'yilgan vaqti: {formatNewsDate(n.publishedAt)}</>}
@@ -443,27 +508,149 @@ const AdminPanel = ({ userRole = 'admin' }) => {
       </section>
       <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
         <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>So'rovnomalar</h2>
-        <form onSubmit={handleAddPoll} style={{marginBottom: 16, display:'flex', flexWrap:'wrap', gap:8, alignItems:'center'}}>
+        <form onSubmit={handleAddPoll} style={{marginBottom: 16, display:'flex', flexDirection:'column', gap:12}}>
           <input type="text" placeholder="Savol" value={pollQuestion} onChange={e => setPollQuestion(e.target.value)} style={{padding:8, minWidth:180}} />
-          {pollOptions.map((opt, idx) => (
-            <input key={idx} type="text" placeholder={`Variant ${idx+1}`} value={opt} onChange={e => {
-              const newOpts = [...pollOptions];
-              newOpts[idx] = e.target.value;
-              setPollOptions(newOpts);
-            }} style={{padding:8, minWidth:120}} />
-          ))}
-          <button type="button" onClick={() => setPollOptions([...pollOptions, ''])} style={{padding:'8px 12px'}}>+</button>
-          <button type="submit" style={{padding:'8px 16px', background:'#1a3a6b', color:'#fff', border:'none', borderRadius:4}}>Qo'shish</button>
+          <div style={{display:'flex', flexDirection:'column', gap:8}}>
+            <div style={{fontSize:'0.9em', color:'#666', marginBottom:'4px'}}>Variantlar:</div>
+            {pollOptions.map((opt, idx) => (
+              <div key={idx} style={{display:'flex', gap:8, alignItems:'center'}}>
+                <input 
+                  type="text" 
+                  placeholder={`Variant ${idx+1}`} 
+                  value={opt} 
+                  onChange={e => {
+                    const newOpts = [...pollOptions];
+                    newOpts[idx] = e.target.value;
+                    setPollOptions(newOpts);
+                  }} 
+                  style={{padding:8, minWidth:200, flex:1}} 
+                />
+                {pollOptions.length > 2 && (
+                  <button 
+                    type="button" 
+                    onClick={() => handleRemovePollOption(idx)}
+                    style={{
+                      padding:'6px 10px',
+                      background:'#dc3545',
+                      color:'#fff',
+                      border:'none',
+                      borderRadius:4,
+                      cursor:'pointer',
+                      fontSize:'0.8em'
+                    }}
+                  >
+                    O'chirish
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <div style={{display:'flex', gap:8, alignItems:'center'}}>
+            <button 
+              type="button" 
+              onClick={() => setPollOptions([...pollOptions, ''])} 
+              style={{
+                padding:'8px 12px',
+                background:'#28a745',
+                color:'#fff',
+                border:'none',
+                borderRadius:4,
+                cursor:'pointer'
+              }}
+            >
+              + Variant qo'shish
+            </button>
+            <button 
+              type="submit" 
+              disabled={pollLoading}
+              style={{
+                padding:'8px 16px', 
+                background: pollLoading ? '#ccc' : '#1a3a6b', 
+                color:'#fff', 
+                border:'none', 
+                borderRadius:4,
+                cursor: pollLoading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {pollLoading ? 'Qo\'shilmoqda...' : 'So\'rovnoma qo\'shish'}
+            </button>
+          </div>
         </form>
-        {pollError && <div style={{color:'red', marginBottom:8}}>{pollError}</div>}
-        <ul style={{listStyle:'none', padding:0}}>
-          {polls.map(poll => (
-            <li key={poll.id} style={{display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #eee', padding:'8px 0'}}>
-              <span>{poll.question}</span>
-              <button onClick={() => handleDeletePoll(poll.id)} style={{background:'#fff', color:'#c00', border:'1px solid #c00', borderRadius:4, padding:'4px 10px', cursor:'pointer'}}>O'chirish</button>
-            </li>
-          ))}
-        </ul>
+        {pollError && (
+          <div style={{
+            padding: '8px 12px',
+            marginBottom: 8,
+            borderRadius: 4,
+            fontSize: '0.9em',
+            fontWeight: '500',
+            background: '#f8d7da',
+            color: '#721c24',
+            border: '1px solid #f5c6cb'
+          }}>
+            {pollError}
+            <button 
+              onClick={() => setPollError('')}
+              style={{
+                float: 'right',
+                background: 'none',
+                border: 'none',
+                color: 'inherit',
+                cursor: 'pointer',
+                fontSize: '1.2em',
+                fontWeight: 'bold'
+              }}
+            >
+              ×
+            </button>
+          </div>
+        )}
+        <div style={{marginTop: '16px'}}>
+          <h3 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b', fontSize: '1.1em', marginBottom: '12px'}}>Mavjud so'rovnomalar:</h3>
+          {polls.length === 0 ? (
+            <div style={{textAlign: 'center', padding: '20px', color: '#888', fontStyle: 'italic'}}>
+              Hali so'rovnoma qo'shilmagan
+            </div>
+          ) : (
+            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+              {polls.map(poll => (
+                <div key={poll.id} style={{
+                  padding: '12px',
+                  background: '#f8f9fa',
+                  borderRadius: 8,
+                  border: '1px solid #e9ecef'
+                }}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+                    <h4 style={{margin: 0, fontSize: '1em', color: '#1a3a6b'}}>{poll.question}</h4>
+                    <button 
+                      onClick={() => handleDeletePoll(poll.id)} 
+                      style={{
+                        background: '#fff', 
+                        color: '#dc3545', 
+                        border: '1px solid #dc3545', 
+                        borderRadius: 4, 
+                        padding: '6px 12px', 
+                        cursor: 'pointer',
+                        fontSize: '0.8em'
+                      }}
+                    >
+                      O'chirish
+                    </button>
+                  </div>
+                  <div style={{fontSize: '0.9em', color: '#666'}}>
+                    <strong>Variantlar:</strong>
+                    <ul style={{margin: '4px 0', paddingLeft: '20px'}}>
+                      {Object.keys(poll.votes || {}).map((option, idx) => (
+                        <li key={idx} style={{marginBottom: '2px'}}>
+                          {option} - {poll.votes[option] || 0} ovoz
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
       {userRole === 'superadmin' && (
         <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
@@ -492,40 +679,225 @@ const AdminPanel = ({ userRole = 'admin' }) => {
           </ul>
         </section>
       )}
-      {userRole === 'superadmin' && (
+      {(userRole === 'superadmin' || userRole === 'admin' || userRole === 'journalist') && (
         <section style={{margin: '24px 0', border: '1px solid #eee', borderRadius: 8, padding: 16}}>
-          <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b'}}>Featured Match boshqaruvi</h2>
-          {featuredMatches.map(m => (
-            <div key={m.id} style={{display:'flex',alignItems:'center',gap:16,marginBottom:12}}>
-              <img src={m.home.logo || logoDefault} alt={m.home.name} style={{width:40}} />
-              <b>{m.home.name}</b>
-              <span>vs</span>
-              <img src={m.away.logo || logoDefault} alt={m.away.name} style={{width:40}} />
-              <b>{m.away.name}</b>
-              <span>{m.league}</span>
-              <span>{m.date} {m.time}</span>
-              <button onClick={() => handleEditFeatured(m)} style={{marginLeft:12}}>Tahrirlash</button>
-              <button onClick={() => handleDeleteFeatured(m.id)} style={{marginLeft:4, color:'#c00'}}>O'chirish</button>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+            <h2 style={{fontFamily: 'Playfair Display, serif', color: '#1a3a6b', margin: 0}}>Featured Match boshqaruvi</h2>
+            <button 
+              onClick={loadFeaturedMatches}
+              style={{
+                padding: '6px 12px',
+                background: '#28a745',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: '0.8em',
+                cursor: 'pointer'
+              }}
+            >
+              Yangilash
+            </button>
+          </div>
+          {featuredMatches.length === 0 ? (
+            <div style={{textAlign: 'center', padding: '20px', color: '#888', fontStyle: 'italic'}}>
+              Hali featured match qo'shilmagan
             </div>
-          ))}
-          <form onSubmit={editFeatured ? handleSaveFeatured : handleAddFeaturedMatch} style={{display:'flex', gap:8, alignItems:'center', marginBottom:8, flexWrap:'wrap'}}>
-            <input list="teams" type="text" placeholder="Home team" value={homeTeam} onChange={e => setHomeTeam(e.target.value)} style={{padding:8, minWidth:160}} />
-            <input list="teams" type="text" placeholder="Away team" value={awayTeam} onChange={e => setAwayTeam(e.target.value)} style={{padding:8, minWidth:160}} />
-            <datalist id="teams">
-              {teamList.map(t => <option key={t} value={t} />)}
-            </datalist>
-            {homeTeam && <img src={teamLogos[homeTeam] || logoDefault} alt={homeTeam} style={{width:32,marginLeft:4}} />}
-            {awayTeam && <img src={teamLogos[awayTeam] || logoDefault} alt={awayTeam} style={{width:32,marginLeft:4}} />}
-            <input type="time" placeholder="Vaqt" value={matchTime} onChange={e => setMatchTime(e.target.value)} style={{padding:8, minWidth:100}} />
-            <input type="date" placeholder="Sana" value={matchDate} onChange={e => setMatchDate(e.target.value)} style={{padding:8, minWidth:120}} />
-            <select value={matchLeague} onChange={e => setMatchLeague(e.target.value)} style={{padding:8, minWidth:140}}>
-              <option value="">Turnir tanlang</option>
-              {leagueList.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-            <button type="submit" style={{padding:'8px 16px', background:'#1a3a6b', color:'#fff', border:'none', borderRadius:4}}>{editFeatured ? 'Saqlash' : 'Qo\'shish'}</button>
-            {editFeatured && <button type="button" onClick={()=>{setEditFeatured(false); setHomeTeam(''); setAwayTeam(''); setMatchTime(''); setMatchDate(''); setMatchLeague('');}}>Bekor qilish</button>}
+          ) : (
+            <div style={{marginBottom: '20px'}}>
+              {featuredMatches.map(m => (
+                <div key={m.id} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  marginBottom: 12,
+                  padding: '12px',
+                  background: '#f8f9fa',
+                  borderRadius: 8,
+                  border: '1px solid #e9ecef'
+                }}>
+                  <img src={m.home.logo || logoDefault} alt={m.home.name} style={{width: 32, height: 32, objectFit: 'contain'}} />
+                  <b style={{minWidth: 120, fontSize: '0.9em'}}>{m.home.name}</b>
+                  <span style={{color: '#666', fontWeight: 'bold'}}>vs</span>
+                  <img src={m.away.logo || logoDefault} alt={m.away.name} style={{width: 32, height: 32, objectFit: 'contain'}} />
+                  <b style={{minWidth: 120, fontSize: '0.9em'}}>{m.away.name}</b>
+                  <span style={{color: '#1a3a6b', fontSize: '0.85em', fontWeight: '600'}}>{m.league}</span>
+                  <span style={{color: '#666', fontSize: '0.85em'}}>{m.date} {m.time}</span>
+                  {m.createdAt && (
+                    <span style={{color: '#999', fontSize: '0.75em'}}>
+                      Qo'shilgan: {new Date(m.createdAt).toLocaleDateString('uz-UZ')}
+                    </span>
+                  )}
+                  <div style={{marginLeft: 'auto', display: 'flex', gap: 8}}>
+                    <button 
+                      onClick={() => handleEditFeatured(m)} 
+                      style={{
+                        padding: '6px 12px',
+                        background: '#1a3a6b',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 4,
+                        fontSize: '0.8em',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Tahrirlash
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteFeatured(m.id)} 
+                      style={{
+                        padding: '6px 12px',
+                        background: '#fff',
+                        color: '#dc3545',
+                        border: '1px solid #dc3545',
+                        borderRadius: 4,
+                        fontSize: '0.8em',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      O'chirish
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <form onSubmit={editFeatured ? handleSaveFeatured : handleAddFeaturedMatch} style={{
+            background: '#f8f9fa',
+            padding: '16px',
+            borderRadius: 8,
+            border: '1px solid #e9ecef',
+            marginBottom: 8
+          }}>
+            <div style={{display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap'}}>
+              <div style={{display: 'flex', alignItems: 'center', gap: 4}}>
+                <input 
+                  list="teams" 
+                  type="text" 
+                  placeholder="Uy jamoasi" 
+                  value={homeTeam} 
+                  onChange={e => setHomeTeam(e.target.value)} 
+                  style={{padding: 8, minWidth: 160, borderRadius: 4, border: '1px solid #ddd'}} 
+                />
+                {homeTeam && <img src={teamLogos[homeTeam] || logoDefault} alt={homeTeam} style={{width: 24, height: 24, objectFit: 'contain'}} />}
+              </div>
+              <div style={{display: 'flex', alignItems: 'center', gap: 4}}>
+                <input 
+                  list="teams" 
+                  type="text" 
+                  placeholder="Mehmon jamoasi" 
+                  value={awayTeam} 
+                  onChange={e => setAwayTeam(e.target.value)} 
+                  style={{padding: 8, minWidth: 160, borderRadius: 4, border: '1px solid #ddd'}} 
+                />
+                {awayTeam && <img src={teamLogos[awayTeam] || logoDefault} alt={awayTeam} style={{width: 24, height: 24, objectFit: 'contain'}} />}
+              </div>
+              <datalist id="teams">
+                {teamList.map(t => <option key={t} value={t} />)}
+              </datalist>
+              <div style={{fontSize: '0.8em', color: '#666', marginTop: '4px'}}>
+                Mashhur jamoalar: Real Madrid, Barcelona, Manchester United, Liverpool, Bayern Munich, Juventus, Chelsea, Arsenal, PSG
+              </div>
+            </div>
+            <div style={{display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap'}}>
+              <input 
+                type="date" 
+                placeholder="Sana" 
+                value={matchDate} 
+                onChange={e => setMatchDate(e.target.value)} 
+                style={{padding: 8, minWidth: 120, borderRadius: 4, border: '1px solid #ddd'}} 
+              />
+              <input 
+                type="time" 
+                placeholder="Vaqt" 
+                value={matchTime} 
+                onChange={e => setMatchTime(e.target.value)} 
+                style={{padding: 8, minWidth: 100, borderRadius: 4, border: '1px solid #ddd'}} 
+              />
+              <select 
+                value={matchLeague} 
+                onChange={e => setMatchLeague(e.target.value)} 
+                style={{padding: 8, minWidth: 140, borderRadius: 4, border: '1px solid #ddd'}}
+              >
+                <option value="">Turnir tanlang</option>
+                {leagueList.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </div>
+            <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+              <button 
+                type="submit" 
+                disabled={featuredLoading}
+                style={{
+                  padding: '8px 16px', 
+                  background: featuredLoading ? '#ccc' : '#1a3a6b', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: 4,
+                  cursor: featuredLoading ? 'not-allowed' : 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                {featuredLoading ? 'Yuklanmoqda...' : (editFeatured ? 'Saqlash' : 'Qo\'shish')}
+              </button>
+              {editFeatured && (
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setEditFeatured(false); 
+                    setHomeTeam(''); 
+                    setAwayTeam(''); 
+                    setMatchTime(''); 
+                    setMatchDate(''); 
+                    setMatchLeague('');
+                    setFeaturedMsg('');
+                  }}
+                  style={{
+                    padding: '8px 16px', 
+                    background: '#fff', 
+                    color: '#666', 
+                    border: '1px solid #ddd', 
+                    borderRadius: 4,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Bekor qilish
+                </button>
+              )}
+            </div>
           </form>
-          {featuredMsg && <div style={{color:'green', marginBottom:8}}>{featuredMsg}</div>}
+          {featuredMsg && (
+            <div style={{
+              padding: '8px 12px',
+              marginBottom: 8,
+              borderRadius: 4,
+              fontSize: '0.9em',
+              fontWeight: '500',
+              ...(featuredMsg.includes('Xatolik') || featuredMsg.includes('O\'chirishda xatolik') ? {
+                background: '#f8d7da',
+                color: '#721c24',
+                border: '1px solid #f5c6cb'
+              } : {
+                background: '#d4edda',
+                color: '#155724',
+                border: '1px solid #c3e6cb'
+              })
+            }}>
+              {featuredMsg}
+              <button 
+                onClick={() => setFeaturedMsg('')}
+                style={{
+                  float: 'right',
+                  background: 'none',
+                  border: 'none',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                  fontSize: '1.2em',
+                  fontWeight: 'bold'
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
         </section>
       )}
     </div>
