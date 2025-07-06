@@ -458,7 +458,7 @@ const AdminPanel = ({ userRole = 'admin' }) => {
           border: '1.5px solid #e0e0e0'
         }}>
           <div style={{display:'flex', gap:12, flexWrap:'wrap'}}>
-            <input type="text" placeholder="Sarlavha" value={title} onChange={e => setTitle(e.target.value)} style={{flex:2, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontSize: '1.1em', fontFamily: 'Poppins, Arial, sans-serif'}} />
+            <input className='admin-form-input' type="text" placeholder="Sarlavha" value={title} onChange={e => setTitle(e.target.value)} style={{flex:2, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontSize: '1.1em', fontFamily: 'Poppins, Arial, sans-serif'}} />
             <select value={status} onChange={e => setStatus(e.target.value)} style={{flex:1, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontFamily: 'Poppins, Arial, sans-serif', fontSize: '1.1em'}}>
               <option value="Draft">Draft</option>
               <option value="Published">Published</option>
