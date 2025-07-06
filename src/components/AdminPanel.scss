@@ -1,0 +1,137 @@
+.admin-panel, .admin-card, .admin-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 18px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-form label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.admin-form button {
+  font-size: 1rem;
+  padding: 10px 18px;
+  border-radius: 6px;
+  background: #1a237e;
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+@media (max-width: 470px) {
+  .admin-panel, .admin-card, .admin-form {
+    padding: 10px 4px;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+  .admin-form {
+    gap: 10px;
+    min-width: 0;
+  }
+  .admin-form label {
+    font-size: 0.95rem;
+  }
+  .admin-form input,
+  .admin-form select,
+  .admin-form textarea {
+    font-size: 0.95rem;
+    padding: 7px 8px;
+    height: 34px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .admin-form input[type='file'] {
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0;
+    height: auto;
+  }
+  .admin-form button {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 375px) {
+  .admin-form input,
+  .admin-form select,
+  .admin-form textarea {
+    font-size: 0.9rem;
+    padding: 5px 6px;
+    height: 30px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .admin-form input[type='file'] {
+    font-size: 0.9rem;
+    padding: 0;
+    height: auto;
+  }
+  .admin-form button {
+    font-size: 0.9rem;
+    padding: 7px 8px;
+  }
+  .admin-form label {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .admin-form input,
+  .admin-form select,
+  .admin-form textarea {
+    font-size: 0.85rem;
+    padding: 3px 4px;
+    height: 26px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .admin-form input[type='file'] {
+    font-size: 0.85rem;
+    padding: 0;
+    height: auto;
+  }
+  .admin-form button {
+    font-size: 0.85rem;
+    padding: 6px 6px;
+  }
+  .admin-form label {
+    font-size: 0.85rem;
+  }
+} 
