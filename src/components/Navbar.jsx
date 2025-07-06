@@ -19,7 +19,7 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
       <div className="wrapper">
         <div className='nav_top'>
           <div className="nav_logo">
-            <h2>Escore</h2>
+            <h2 style={{cursor:'pointer', margin:0, padding:0}} onClick={() => navigate('/')}>Escore</h2>
             <div className="nav_inputs hide-on-mobile">
               <form className="form" onSubmit={e => e.preventDefault()}>
                 <button type="submit">
@@ -69,6 +69,26 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
           </div>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
             {/* Hamburger icon for mobile */}
+            {(!user) && (
+              <button
+                className="show-on-mobile-login"
+                onClick={goLogin}
+                style={{
+                  display: 'none',
+                  background: 'none',
+                  border: '1px solid #1a3a6b',
+                  borderRadius: '8px',
+                  padding: '6px 16px',
+                  color: '#1a3a6b',
+                  fontWeight: 600,
+                  fontSize: '1em',
+                  marginRight: '8px',
+                  cursor: 'pointer',
+                }}
+              >
+                Tizimga kirish
+              </button>
+            )}
             <button
               className="hamburger-menu-btn"
               aria-label="Open menu"
@@ -164,13 +184,13 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
                   <>
                     <button
                       onClick={() => { goLogin(); setMobileMenuOpen(false); }}
-                      className="nav-auth-btn"
+                      className="nav-auth-btn hide-on-mobile"
                     >
                       Tizimga kirish
                     </button>
                     <button
                       onClick={() => { goRegister(); setMobileMenuOpen(false); }}
-                      className="nav-auth-btn primary"
+                      className="nav-auth-btn primary hide-on-mobile"
                     >
                       Ro'yxatdan o'tish
                     </button>

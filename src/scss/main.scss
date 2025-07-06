@@ -153,13 +153,19 @@ small {
 .home-grid {
   display: flex;
   gap: 24px;
+  align-items: flex-start;
+}
 
-  .home-grid-left {
-    .home-grid-left-top {
-      display: flex;
-      gap: 24px;
-      margin-top: 24px;
-    }
+.home-grid-left, .home-grid-right {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.home-grid-left {
+  .home-grid-left-top {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
   }
 }
 
@@ -525,9 +531,9 @@ hr {
 }
 
 @media (max-width: 700px) {
-  .home-grid {
-    display: block;
-  }
+  // .home-grid {
+  //   display: block;
+  // }
 
   .vertical-text {
     display: none;
@@ -1125,5 +1131,10 @@ header {
 @media (max-width: 675px) {
   .hide-on-mobile {
     display: none !important;
+  }
+  .show-on-mobile-login {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
 }
