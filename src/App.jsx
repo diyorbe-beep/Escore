@@ -196,6 +196,15 @@ const App = () => {
 
   return (
     <Router>
+      {page !== 'home' && (
+        <Navbar
+          user={user}
+          onLogout={handleLogout}
+          search={search}
+          setSearch={setSearch}
+          onNavigate={handleNavigate}
+        />
+      )}
       <Layout user={user} onLogout={handleLogout} search={search} setSearch={setSearch}>
         <Routes>
           <Route path="/" element={<Home />} />

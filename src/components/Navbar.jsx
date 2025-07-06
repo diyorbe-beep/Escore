@@ -91,18 +91,18 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
               </svg>
             </button>
             {user ? (
-              <UserProfile user={user} onLogout={onLogout} />
+              <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
             ) : (
               <>
                 <button
                   onClick={goLogin}
-                  className="nav-auth-btn"
+                  className="nav-auth-btn hide-on-mobile"
                 >
                   Tizimga kirish
                 </button>
                 <button
                   onClick={goRegister}
-                  className="nav-auth-btn primary"
+                  className="nav-auth-btn primary hide-on-mobile"
                 >
                   Ro'yxatdan o'tish
                 </button>
@@ -159,7 +159,7 @@ const Navbar = ({ isAdmin, isJournalist, user, onLogout, search, setSearch, onNa
               )}
               <div style={{ marginTop: 24 }}>
                 {user ? (
-                  <UserProfile user={user} onLogout={onLogout} />
+                  <UserProfile user={user} onLogout={onLogout} onNavigate={onNavigate} />
                 ) : (
                   <>
                     <button

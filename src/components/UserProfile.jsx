@@ -51,9 +51,9 @@ const UserProfile = ({ user, onLogout, onNavigate }) => {
       {showDropdown && (
         <div
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: 0,
+            position: 'fixed',
+            top: 16,
+            right: 16,
             background: 'white',
             border: '1px solid #e0e0e0',
             borderRadius: '8px',
