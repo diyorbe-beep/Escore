@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NewsList from '../components/NewsList';
 import FeaturedMatch from '../components/FeaturedMatch';
 import { newsApi } from '../services/ApiService';
+import './Home.scss';
 
 const transfers = [
   { title: "Chelsea Target Everton's", img: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=200&q=80' },
