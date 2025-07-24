@@ -5,15 +5,24 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'uploads'));
+// Cloudinary
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+require('dotenv').config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'escore-news',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+    transformation: [{ width: 800, height: 600, crop: 'limit' }],
   },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + ext;
-    cb(null, uniqueName);
-  }
 });
 const upload = multer({ storage });
 
@@ -340,13 +349,12 @@ app.delete('/api/categories/:id', (req, res) => {
 });
 
 // Static uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Rasm yuklash endpointi
+// Rasm yuklash endpointi (Cloudinary)
 app.post('/api/upload', upload.single('image'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Fayl topilmadi' });
-  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-  res.json({ url: fileUrl });
+  if (!req.file || !req.file.path) return res.status(400).json({ error: 'Fayl topilmadi' });
+  res.json({ url: req.file.path });
 });
 
 const teamLogos = {
