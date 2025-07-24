@@ -463,8 +463,8 @@ const AdminPanel = ({ userRole = 'admin' }) => {
               <option value="Draft">Draft</option>
               <option value="Published">Published</option>
             </select>
-            <select value={newsCategory} onChange={e => setNewsCategory(e.target.value)} style={{flex:1, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontFamily: 'Poppins, Arial, sans-serif', fontSize: '1.1em'}}>
-              <option value="">Kategoriya tanlang</option>
+            <select  value={newsCategory} onChange={e => setNewsCategory(e.target.value)} style={{flex:1, padding: 12, borderRadius: 6, border: '1.5px solid #d6d3c7', fontFamily: 'Poppins, Arial, sans-serif', fontSize: '1.1em'}}>
+              <option className='admin-form-katigoriya' value="">Kategoriya tanlang</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.name}>{cat.name}</option>
               ))}
