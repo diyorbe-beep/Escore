@@ -8,6 +8,7 @@ const multer = require('multer');
 // Cloudinary
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 cloudinary.config({
@@ -99,61 +100,79 @@ function ensureSuperadminAndAdmin() {
 }
 ensureSuperadminAndAdmin();
 
+const newsSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  image: String,
+  status: { type: String, default: 'Draft' },
+  deleted: { type: Boolean, default: false },
+  publishedAt: { type: Date, default: Date.now },
+  isFeatured: { type: Boolean, default: false },
+  category: String,
+});
+const News = mongoose.model('News', newsSchema);
+
 // --- News endpoints ---
-app.get('/api/news', (req, res) => {
-  const news = readData('news.json');
-  res.json(news.filter(n => !n.deleted));
-});
-
-app.post('/api/news', (req, res) => {
-  const { title, content, image, status, isFeatured } = req.body;
-  if (!title || !content) return res.status(400).json({ error: 'Title va content majburiy' });
-  const news = readData('news.json');
-  const newNews = {
-    id: uuidv4(),
-    title,
-    content,
-    image: image || null,
-    status: status || 'Draft',
-    deleted: false,
-    publishedAt: new Date().toISOString(),
-    isFeatured: !!isFeatured
-  };
-  // Faqat bitta yangilik kun yangiligi bo'lishi mumkin
-  if (isFeatured) {
-    news.forEach(n => { n.isFeatured = false; });
+app.get('/api/news', async (req, res) => {
+  try {
+    const news = await News.find({ deleted: false }).sort({ publishedAt: -1 });
+    res.json(news);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
   }
-  news.unshift(newNews);
-  writeData('news.json', news);
-  res.status(201).json(newNews);
 });
 
-app.put('/api/news/:id', (req, res) => {
-  const { id } = req.params;
-  const { title, content, image, status, isFeatured } = req.body;
-  let news = readData('news.json');
-  // Faqat bitta yangilik kun yangiligi bo'lishi mumkin
-  if (isFeatured) {
-    news.forEach(n => { n.isFeatured = false; });
+app.post('/api/news', async (req, res) => {
+  try {
+    const { title, content, image, status, isFeatured, category } = req.body;
+    if (!title || !content) return res.status(400).json({ error: 'Title va content majburiy' });
+    if (isFeatured) {
+      await News.updateMany({}, { isFeatured: false });
+    }
+    const newNews = new News({
+      title,
+      content,
+      image: image || null,
+      status: status || 'Draft',
+      isFeatured: !!isFeatured,
+      category: category || '',
+    });
+    await newNews.save();
+    res.status(201).json(newNews);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
   }
-  news = news.map(n => n.id === id ? {
-    ...n,
-    title: title || n.title,
-    content: content || n.content,
-    image: image !== undefined ? image : n.image,
-    status: status || n.status,
-    isFeatured: !!isFeatured
-  } : n);
-  writeData('news.json', news);
-  res.json({ success: true });
 });
 
-app.delete('/api/news/:id', (req, res) => {
-  const { id } = req.params;
-  let news = readData('news.json');
-  news = news.map(n => n.id === id ? { ...n, deleted: true } : n);
-  writeData('news.json', news);
-  res.json({ success: true });
+app.put('/api/news/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, image, status, isFeatured, category } = req.body;
+    if (isFeatured) {
+      await News.updateMany({}, { isFeatured: false });
+    }
+    const updated = await News.findByIdAndUpdate(id, {
+      title,
+      content,
+      image,
+      status,
+      isFeatured: !!isFeatured,
+      category: category || '',
+    }, { new: true });
+    res.json({ success: true, news: updated });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.delete('/api/news/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await News.findByIdAndUpdate(id, { deleted: true });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // --- News Comments API ---
@@ -445,6 +464,12 @@ app.delete('/api/featured-match/:id', (req, res) => {
   writeData('matches.json', matches);
   res.json({ success: true });
 });
+
+mongoose.connect('mongodb://localhost:27017/shu-klinika', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log('MongoDB connected!'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 app.listen(PORT, () => {
   console.log(`eScore backend running on http://localhost:${PORT}`);
