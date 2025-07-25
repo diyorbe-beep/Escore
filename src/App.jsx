@@ -21,7 +21,12 @@ const LoginWrapper = ({ setUser }) => {
     if (u) {
       setUser(u);
       localStorage.setItem('user', JSON.stringify(u));
-      navigate('/');
+      // Adminni aniqlash va yo'naltirish
+      if ((u.email === 'admin@mail.com' && u.password === 'admin123') || u.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
   }} />;
 };
@@ -210,7 +215,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/news" element={<NewsList />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin" element={<AdminPanel userRole={user?.role} />} />
           <Route path="/livescore" element={<LiveScore />} />
           <Route path="/poll" element={<Poll />} />
           <Route path="/journalist" element={<JournalistPanel />} />

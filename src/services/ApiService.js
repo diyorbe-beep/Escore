@@ -1,6 +1,6 @@
 import { secureRequest, getAuthHeaders } from './AuthService';
 
-const API_URL = 'https://escorebackend.onrender.com/api'; // To'g'ri backendga yo'naltirildi
+const API_URL = 'http://localhost:5000/api'; // Lokal backendga yo'naltirildi
 
 // Yangiliklar bilan ishlash
 export const newsApi = {
