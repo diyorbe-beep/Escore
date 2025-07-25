@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiArrowLeft, FiShare2, FiBookmark, FiClock, FiUser, FiEye } from 'react-icons/fi';
-import { footballNewsApi, formatNewsDate } from '../services/FootballNewsService';
+import footballNewsService, { formatNewsDate } from '../services/FootballNewsService';
 import { useParams } from 'react-router-dom';
 import { newsApi } from '../services/ApiService';
 import './NewsDetailPage.scss';
@@ -35,7 +35,7 @@ const NewsDetailPage = () => {
 
   const fetchRelatedNews = async () => {
     try {
-      const newsData = await footballNewsApi.getLatestNews(1, 10);
+      const newsData = await footballNewsService.getAllNews();
       const sortedRelatedNews = newsData
         .slice(0, 6)
         .sort((a, b) => {

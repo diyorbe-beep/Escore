@@ -1,6 +1,6 @@
 import { secureRequest, getAuthHeaders } from './AuthService';
 
-const API_URL = 'https://football-new-backend-end.onrender.com/api'; // Local backendga yo'naltirildi
+const API_URL = 'https://escorebackend.onrender.com/api'; // To'g'ri backendga yo'naltirildi
 
 // Yangiliklar bilan ishlash
 export const newsApi = {
@@ -12,12 +12,11 @@ export const newsApi = {
 
   // Bitta yangilikni ID bo'yicha olish
   getById: async (id) => {
-    const response = await fetch(`${API_URL}/news`); // id bo'yicha olish backendda yo'q
-    const all = await response.json();
-    return all.find(n => n.id === id);
+    const response = await fetch(`${API_URL}/news/${id}`);
+    return response.json();
   },
 
-  // Yangi yangilik qo'shish (faqat admin va jurnalistlar uchun)
+  // Yangi yangilik qo'shish
   create: async (newsData) => {
     const response = await fetch(`${API_URL}/news`, {
       method: 'POST',
@@ -29,15 +28,37 @@ export const newsApi = {
 
   // Yangilikni tahrirlash
   update: async (id, newsData) => {
-    return secureRequest(`${API_URL}/news/${id}`, {
+    const response = await fetch(`${API_URL}/news/${id}`, {
       method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newsData)
     });
+    return response.json();
   },
 
   // Yangilikni o'chirish
   delete: async (id) => {
     const response = await fetch(`${API_URL}/news/${id}`, {
+      method: 'DELETE'
+    });
+    return response.json();
+  },
+
+  // Izohlar bilan ishlash
+  getComments: async (newsId) => {
+    const response = await fetch(`${API_URL}/news/${newsId}/comments`);
+    return response.json();
+  },
+  addComment: async (newsId, commentData) => {
+    const response = await fetch(`${API_URL}/news/${newsId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(commentData)
+    });
+    return response.json();
+  },
+  deleteComment: async (newsId, commentId) => {
+    const response = await fetch(`${API_URL}/news/${newsId}/comments/${commentId}`, {
       method: 'DELETE'
     });
     return response.json();
@@ -77,19 +98,10 @@ export const liveScoreApi = {
 
 // So'rovnomalar bilan ishlash
 export const pollApi = {
-  // Barcha so'rovnomalarni olish
   getAll: async () => {
     const response = await fetch(`${API_URL}/polls`);
     return response.json();
   },
-
-  // Bitta so'rovnomani olish
-  getById: async (id) => {
-    const response = await fetch(`${API_URL}/polls/${id}`);
-    return response.json();
-  },
-
-  // Yangi so'rovnoma yaratish
   create: async (pollData) => {
     const response = await fetch(`${API_URL}/polls`, {
       method: 'POST',
@@ -98,8 +110,6 @@ export const pollApi = {
     });
     return response.json();
   },
-
-  // So'rovnomada ovoz berish
   vote: async (pollId, option) => {
     const response = await fetch(`${API_URL}/polls/vote`, {
       method: 'POST',
@@ -107,49 +117,58 @@ export const pollApi = {
       body: JSON.stringify({ pollId, option })
     });
     return response.json();
+  },
+  delete: async (id, query) => {
+    // query: { role: 'admin' } yoki { superadminToken: 'admin123' }
+    const params = new URLSearchParams(query).toString();
+    const response = await fetch(`${API_URL}/polls/${id}?${params}`, {
+      method: 'DELETE'
+    });
+    return response.json();
   }
 };
 
-// Foydalanuvchi profili bilan ishlash
+// Kategoriyalar bilan ishlash
+export const categoryApi = {
+  getAll: async () => {
+    const response = await fetch(`${API_URL}/categories`);
+    return response.json();
+  },
+  create: async (data) => {
+    const response = await fetch(`${API_URL}/categories`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  },
+  delete: async (id, superadminToken) => {
+    const response = await fetch(`${API_URL}/categories/${id}?superadminToken=${superadminToken}`, {
+      method: 'DELETE'
+    });
+    return response.json();
+  }
+};
+
+// Rasm yuklash
+export const uploadApi = {
+  uploadImage: async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await fetch(`${API_URL}/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    return response.json();
+  }
+};
+
+// Foydalanuvchi bilan ishlash
 export const userApi = {
-  // Profil ma'lumotlarini olish
   getProfile: async (id) => {
     const response = await fetch(`${API_URL}/user/${id}`);
     return response.json();
   },
-
-  // Profil ma'lumotlarini yangilash
-  updateProfile: async (userData) => {
-    return secureRequest(`${API_URL}/users/profile`, {
-      method: 'PUT',
-      body: JSON.stringify(userData)
-    });
-  },
-
-  // Profil rasmini yuklash
-  uploadAvatar: async (file) => {
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    return secureRequest(`${API_URL}/users/avatar`, {
-      method: 'POST',
-      headers: {
-        ...getAuthHeaders(),
-        // FormData uchun Content-Type o'chiriladi
-        'Content-Type': undefined
-      },
-      body: formData
-    });
-  },
-
-  // Parolni o'zgartirish
-  changePassword: async (passwordData) => {
-    return secureRequest(`${API_URL}/users/change-password`, {
-      method: 'POST',
-      body: JSON.stringify(passwordData)
-    });
-  },
-
   register: async (userData) => {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
@@ -158,7 +177,6 @@ export const userApi = {
     });
     return response.json();
   },
-
   login: async (userData) => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
@@ -218,6 +236,32 @@ export const notificationApi = {
 export const matchApi = {
   getAll: async () => {
     const response = await fetch(`${API_URL}/matches`);
+    return response.json();
+  },
+  getFeatured: async () => {
+    const response = await fetch(`${API_URL}/featured-match`);
+    return response.json();
+  },
+  addFeatured: async (data) => {
+    const response = await fetch(`${API_URL}/featured-match`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  },
+  updateFeatured: async (id, data) => {
+    const response = await fetch(`${API_URL}/featured-match/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  },
+  deleteFeatured: async (id) => {
+    const response = await fetch(`${API_URL}/featured-match/${id}`, {
+      method: 'DELETE'
+    });
     return response.json();
   }
 };

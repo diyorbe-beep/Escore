@@ -79,7 +79,7 @@ export const validateEmail = (email) => {
 // Token yangilash
 export const refreshToken = async () => {
   try {
-    const response = await fetch('/api/auth/refresh', {
+    const response = await fetch('https://escorebackend.onrender.com/api/auth/refresh', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${getToken()}`

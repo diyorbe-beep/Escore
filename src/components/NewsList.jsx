@@ -41,7 +41,7 @@ const NewsList = ({ search = '' }) => {
       setNews(published.length > 0 ? published : allNews);
       setLoading(false);
     });
-    axios.get('/api/categories').then(res => {
+    axios.get('https://escorebackend.onrender.com/api/categories').then(res => {
       setCategories(res.data || []);
     });
   }, []);

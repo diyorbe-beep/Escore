@@ -3,6 +3,7 @@ import imgs  from '../assets';
 import axios from 'axios';
 import logoDefault from '../assets/logo.png';
 import Advertisement2 from './advertisement2';
+import { matchApi } from '../services/ApiService';
 // Mock data for demonstration
 const featuredMatch = {
   home: {
@@ -32,8 +33,8 @@ const FeaturedMatch = () => {
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/featured-match').then(res => {
-      setMatches(Array.isArray(res.data) ? res.data : []);
+    matchApi.getFeatured().then(res => {
+      setMatches(Array.isArray(res) ? res : []);
     });
   }, []);
 
