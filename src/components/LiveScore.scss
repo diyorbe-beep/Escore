@@ -1,8 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-
-body{
-
-}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 .live-score-header-top-katigoriya {
   display: flex;
@@ -16,7 +13,7 @@ body{
 
     button {
       padding: 8px 22px;
-      background-color: #3461FD;
+      background-color: #3461fd;
       border: 2px solid transparent;
       border-radius: 10px;
       color: #fff;
@@ -26,14 +23,14 @@ body{
   }
 }
 
-.live-score-header-pinned-leagues{
+.live-score-header-pinned-leagues {
   width: 100%;
   margin: 0 auto;
-  background-color: #F4F7FF;
+  background-color: #f4f7ff;
   padding: 14px 16px;
   margin-top: 30px;
   border-radius: 8px;
-  h1{
+  h1 {
     font-size: 16px;
     font-weight: 400;
     color: #222226;
@@ -58,7 +55,7 @@ body{
 }
 
 .switch::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 20px;
   height: 20px;
@@ -76,4 +73,147 @@ body{
 
 .slider {
   display: none;
+}
+
+.liva_score_bottom {
+  margin-top: 14px;
+  .live_score_bottom1 {
+    .live_score_bottom1_top {
+      display: flex;
+      align-items: center;
+      .live_score_bottom1_top_logo {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        img {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+        }
+      }
+      .section2{
+        gap: 410px;
+      }
+      section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 380px;
+        .live_score_bottom1_league_name {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-left: 24px;
+          h5 {
+            display: flex;
+            flex-direction: column;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: "Inter", sans-serif;
+            color: rgba(34, 34, 38, 0.452);
+            span {
+              font-weight: 600;
+              color: #222226;
+            }
+          }
+        }
+        .live_score_bottom1_leagueName_icon {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          h4 {
+            font-size: 11px;
+            font-family: "Inter", sans-serif;
+            color: #0bb32a;
+          }
+          div {
+            width: 38px;
+            height: 36px;
+            padding: 6px 13px;
+            font-size: 24px;
+            color: rgba(34, 34, 38, 0.459);
+            border-left: 2px solid rgba(34, 34, 38, 0.158);
+          }
+        }
+      }
+    }
+    .live_score_bottom_menu {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 15px;
+      .live_score_bottom_match_time{
+        padding: 3px 18px;
+        border-right: 2px solid #22222683;
+        h3{
+          font-size: 15px;
+          text-align: center;
+          font-weight: 400;
+            font-family: "Inter", sans-serif;
+          color: rgba(34, 34, 38, 0.452);
+        }
+      }
+      .live_score_bottom1_teamName {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        .teams {
+          display: flex;
+          align-items: start;
+        flex-direction: column;
+          .team1 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            h2{
+              font-size: 16px;
+              font-weight: 400;
+            font-family: "Inter", sans-serif;
+              color: rgba(34, 34, 38, 0.445);
+            }
+            img {
+              width: 16px;
+              height: 16px;
+            }
+          }
+          .team2{
+            display: flex;
+            align-items: center;
+            img{
+              height: auto;
+            }
+          }
+        }
+        .live_score_bottom1_teamsleft{
+          display: flex;
+          align-items: center;
+          gap: 29px;
+          .NetworkBars{
+            font-size: 16px;
+            color: #0bb32a;
+          }
+          h2{
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(34, 34, 38, 0.445);
+            font-family: "Inter", sans-serif;
+            span{
+              color: #222226;
+            }
+          }
+          .live_score_bottom1_teams_notification{
+            border-left: 2px solid #22222667;
+            padding: 6px 14px;
+          }
+          .Notification{
+            color: #374DF5;
+            font-size: 24px;
+          }
+        }
+      }
+    }
+  }
 }

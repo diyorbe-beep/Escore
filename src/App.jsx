@@ -13,6 +13,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import JournalistPanel from './components/JournalistPanel'
 import ProfileSettings from './components/ProfileSettings'
+import AvsB from './components/AvsB'
   
 
 const LoginWrapper = ({ setUser }) => {
@@ -220,6 +221,7 @@ const App = () => {
           <Route path="/poll" element={<Poll />} />
           <Route path="/journalist" element={<JournalistPanel />} />
           <Route path="/settings" element={<ProfileSettings />} />
+          <Route path="/AvsB" element={<AvsB />} />
           <Route path="/login" element={<LoginWrapper setUser={setUser} />} />
           <Route path="/register" element={<RegisterWrapper setUser={setUser} />} />
         </Routes>

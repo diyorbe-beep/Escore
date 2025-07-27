@@ -1140,3 +1140,17 @@ header {
     justify-content: center;
   }
 }
+
+
+.live_score_bottom{
+  .live_score_bottom1{
+    .live_score_bottom1_top{
+      display: flex;
+      align-items: center;
+      .live_score_bottom1_top_logo{
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
