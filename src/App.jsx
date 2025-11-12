@@ -13,6 +13,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import JournalistPanel from './components/JournalistPanel'
 import ProfileSettings from './components/ProfileSettings'
+import AvsB from './components/AvsB'
   
 
 const LoginWrapper = ({ setUser }) => {
@@ -21,7 +22,12 @@ const LoginWrapper = ({ setUser }) => {
     if (u) {
       setUser(u);
       localStorage.setItem('user', JSON.stringify(u));
-      navigate('/');
+      // Adminni aniqlash va yo'naltirish
+      if ((u.email === 'admin@mail.com' && u.password === 'admin123') || u.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
   }} />;
 };
@@ -210,11 +216,12 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/news" element={<NewsList />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin" element={<AdminPanel userRole={user?.role} />} />
           <Route path="/livescore" element={<LiveScore />} />
           <Route path="/poll" element={<Poll />} />
           <Route path="/journalist" element={<JournalistPanel />} />
           <Route path="/settings" element={<ProfileSettings />} />
+          <Route path="/AvsB" element={<AvsB />} />
           <Route path="/login" element={<LoginWrapper setUser={setUser} />} />
           <Route path="/register" element={<RegisterWrapper setUser={setUser} />} />
         </Routes>

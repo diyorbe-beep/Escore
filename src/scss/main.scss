@@ -1142,6 +1142,7 @@ header {
 }
 
 
+<<<<<<< HEAD
 
 // Asosiy o'zgaruvchilar
 :root {
@@ -1727,3 +1728,17 @@ body {
     }
   }
 }
+=======
+.live_score_bottom{
+  .live_score_bottom1{
+    .live_score_bottom1_top{
+      display: flex;
+      align-items: center;
+      .live_score_bottom1_top_logo{
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+>>>>>>> 6de8cf7d00364ea6985e890f0c5e25459cb89466
