@@ -1,0 +1,1013 @@
+// Liga haqida sahifa uslublari
+.league-info-page {
+  min-height: 100vh;
+  background-color: #FAF4ED;
+  color: #111111;
+  font-family: 'Inter', sans-serif;
+}
+
+// Embedded variant inside main Layout
+.league-info-page.embedded {
+  display: flex;
+  justify-content: center;
+}
+
+.league-info-page.embedded .main-content {
+  width: 100%;
+  max-width: 1100px; // centerda, lekin 100% emas
+  margin: 0 auto;
+}
+
+.page-container {
+  display: grid;
+  grid-template-columns: 200px 1fr 300px 200px;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 300px;
+    .left-ads,
+    .right-ads {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    .right-content {
+      display: none;
+    }
+  }
+}
+
+.main-content {
+  max-width: 768px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+// Liga sarlavhasi
+.league-header {
+  background: linear-gradient(135deg, #153E75 0%, #1e4a8c 100%);
+  color: white;
+  padding: 40px 30px;
+  position: relative;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  &__info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  &__logo {
+    img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      background: white;
+      border-radius: 8px;
+      padding: 8px;
+    }
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__country {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    .flag {
+      width: 24px;
+      height: 16px;
+      object-fit: cover;
+      border-radius: 2px;
+    }
+  }
+
+  &__founded,
+  &__season,
+  &__matchday {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @media (max-width: 768px) {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Liga jadvali
+.league-table {
+  padding: 30px;
+  border-bottom: 1px solid #e5e7eb;
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin: 0 0 20px 0;
+    color: #153E75;
+    text-align: center;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: #153E75;
+    }
+  }
+
+  &__wrapper {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+
+    th {
+      background: #f8fafc;
+      padding: 12px 8px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+      white-space: nowrap;
+
+      &:first-child {
+        text-align: center;
+        width: 50px;
+      }
+    }
+
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid #f3f4f6;
+      white-space: nowrap;
+    }
+  }
+
+  &__row {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    &.champions-league {
+      border-left: 4px solid #153E75;
+    }
+
+    &.europa-league {
+      border-left: 4px solid #f59e0b;
+    }
+
+    &.relegation {
+      border-left: 4px solid #ef4444;
+    }
+  }
+
+  &__position {
+    text-align: center;
+    font-weight: 600;
+    color: #153E75;
+  }
+
+  &__team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+
+    .team-logo {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .team-name {
+      font-weight: 500;
+    }
+  }
+
+  &__points {
+    font-weight: 700;
+    color: #153E75;
+  }
+
+  &__show-more {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: #153E75;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background: #1e4a8c;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #6b7280;
+
+      .legend-color {
+        width: 16px;
+        height: 3px;
+        border-radius: 2px;
+      }
+
+      &.champions-league .legend-color {
+        background: #153E75;
+      }
+
+      &.europa-league .legend-color {
+        background: #f59e0b;
+      }
+
+      &.relegation .legend-color {
+        background: #ef4444;
+      }
+    }
+  }
+}
+
+.positive {
+  color: #059669;
+}
+
+.negative {
+  color: #dc2626;
+}
+
+// O'ng sidebar
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin: 0;
+    padding: 20px 20px 15px;
+    color: #153E75;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  &__content {
+    padding: 0;
+  }
+
+  &.advertisement {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+
+    .ad-banner {
+      padding: 20px;
+    }
+
+    .ad-content {
+      text-align: center;
+
+      h4 {
+        margin: 0 0 8px 0;
+        color: #153E75;
+        font-size: 1.1rem;
+      }
+
+      p {
+        margin: 0 0 15px 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+    }
+
+    .ad-button {
+      background: #153E75;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background: #1e4a8c;
+      }
+    }
+  }
+}
+
+.player-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #f8fafc;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__position {
+    width: 24px;
+    height: 24px;
+    background: #153E75;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__team {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #6b7280;
+
+    .team-logo-small {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+  }
+
+  &__value {
+    font-weight: 700;
+    color: #153E75;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+}
+
+// O'yinlar jadvali
+.league-fixtures {
+  padding: 30px;
+  border-bottom: 1px solid #e5e7eb;
+
+  .fixtures-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+
+  .fixtures-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin: 0;
+    color: #153E75;
+  }
+
+  .fixtures-tabs {
+    display: flex;
+    gap: 2px;
+    background: #f3f4f6;
+    border-radius: 25px;
+    padding: 4px;
+  }
+
+  .fixtures-tab {
+    padding: 8px 20px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+
+    &.active {
+      background: #153E75;
+      color: white;
+    }
+
+    &:hover:not(.active) {
+      background: #e5e7eb;
+    }
+  }
+
+  .fixtures-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.fixture-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &.upcoming {
+    border-left: 4px solid #153E75;
+  }
+
+  &.finished {
+    border-left: 4px solid #059669;
+  }
+
+  .fixture-date {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 12px;
+    text-transform: capitalize;
+  }
+
+  .fixture-match {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
+  .fixture-team {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+
+    &.home {
+      justify-content: flex-start;
+    }
+
+    &.away {
+      justify-content: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .team-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+
+      @media (max-width: 480px) {
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .fixture-time,
+  .fixture-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+
+    .time,
+    .score {
+      font-weight: 700;
+      color: #153E75;
+      font-size: 1.1rem;
+    }
+
+    .venue,
+    .status {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  }
+}
+
+// Haftaning jamoasi
+.team-of-week {
+  padding: 30px;
+  border-bottom: 1px solid #e5e7eb;
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin: 0 0 30px 0;
+    color: #153E75;
+    text-align: center;
+  }
+
+  &__field {
+    position: relative;
+    background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+    border-radius: 12px;
+    padding: 30px;
+    min-height: 500px;
+    overflow: hidden;
+  }
+}
+
+.field-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.3;
+
+  .field-lines {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 2px solid white;
+    border-radius: 8px;
+
+    .center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80px;
+      height: 80px;
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .penalty-area {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 60px;
+      border: 2px solid white;
+
+      &--top {
+        top: 0;
+        border-top: none;
+      }
+
+      &--bottom {
+        bottom: 0;
+        border-bottom: none;
+      }
+    }
+
+    .goal-area {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 30px;
+      border: 2px solid white;
+
+      &--top {
+        top: 0;
+        border-top: none;
+      }
+
+      &--bottom {
+        bottom: 0;
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.formation-display {
+  position: relative;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 0;
+
+  .position-line {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    &.goalkeeper {
+      justify-content: center;
+    }
+
+    &.defense {
+      justify-content: space-around;
+    }
+
+    &.midfield {
+      justify-content: space-around;
+    }
+
+    &.attack {
+      justify-content: space-around;
+    }
+  }
+
+  .player-card {
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-width: 80px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    .player-rating {
+      background: #153E75;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .player-name {
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-bottom: 2px;
+      color: #111111;
+    }
+
+    .player-team {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    &.goalkeeper .player-rating {
+      background: #f59e0b;
+    }
+
+    &.defender .player-rating {
+      background: #059669;
+    }
+
+    &.midfielder .player-rating {
+      background: #7c3aed;
+    }
+
+    &.forward .player-rating {
+      background: #dc2626;
+    }
+  }
+}
+
+// Statistika diagrammalari
+.stats-charts {
+  padding: 30px;
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin: 0 0 30px 0;
+    color: #153E75;
+    text-align: center;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+
+  &__header {
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    font-size: 1rem;
+    margin: 0 0 8px 0;
+    color: #374151;
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #153E75;
+    margin: 0;
+  }
+
+  &__chart {
+    margin: 20px 0;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__description {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.4;
+  }
+}
+
+.bar-chart {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  .bar {
+    width: 40px;
+    background: linear-gradient(180deg, #153E75 0%, #1e4a8c 100%);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    min-height: 20px;
+
+    .bar-label {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #153E75;
+    }
+  }
+}
+
+.progress-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+
+  .progress-ring__circle {
+    transition: stroke-dashoffset 0.35s;
+  }
+
+  .progress-ring__progress {
+    transition: stroke-dashoffset 0.35s;
+  }
+
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #153E75;
+  }
+}
+
+.line-chart {
+  width: 100%;
+  height: 80px;
+  position: relative;
+  background: linear-gradient(180deg, transparent 0%, #f3f4f6 100%);
+  border-radius: 4px;
+
+  .chart-line {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .chart-point {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #153E75;
+    border-radius: 50%;
+    transform: translate(-50%, 50%);
+  }
+}
+
+.stadium-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+
+  .stadium-icon {
+    font-size: 3rem;
+    color: #153E75;
+  }
+
+  .attendance-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .attendance-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #153E75 0%, #1e4a8c 100%);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+  }
+}
+
+.stats-summary {
+  display: flex;
+  justify-content: space-around;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .summary-item {
+    text-align: center;
+
+    .summary-label {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .summary-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #153E75;
+    }
+  }
+}
+
+// Reklama bannerlari
+.left-ads,
+.right-ads {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .ad-banner {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.vertical {
+      min-height: 400px;
+    }
+
+    .ad-content {
+      h4 {
+        margin: 0 0 10px 0;
+        color: #153E75;
+        font-size: 1.1rem;
+      }
+
+      p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+  }
+}

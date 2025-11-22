@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import Layout from './components/Layout'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -14,7 +14,24 @@ import Register from './pages/Register'
 import JournalistPanel from './components/JournalistPanel'
 import ProfileSettings from './components/ProfileSettings'
 import AvsB from './components/AvsB'
-  
+import LeagueInfoPage from '../pages/league-info/page'
+import TeamInfoPage from '../pages/team-info/page'
+import PlayerInfoPage from '../pages/player-info/page'
+import CoachInfoPage from '../pages/coach-info/page'
+import RefereeInfoPage from '../pages/referee-info/page'
+import MatchDetailsPage from '../pages/match-details/page'
+import FeatureLeagueNavigator from '../components/feature/LeagueNavigator'
+import FeatureRightPanel from '../components/feature/RightPanel'
+import TeamRightSidebar from '../pages/team-info/components/RightSidebar'
+import PlayerRightSidebar from '../pages/player-info/components/RightSidebar'
+import LeagueRightSidebar from '../pages/league-info/components/RightSidebar'
+import MatchRightSidebar from '../pages/match-details/components/RelatedMatches'
+import RefereeRightSidebar from '../pages/referee-info/components/RightSidebar'
+import CoachRightSidebar from '../pages/coach-info/components/RightSidebar'
+import { relatedMatches } from '../mocks/matchData'
+import Advertisement from './components/advertisement'
+import Advertisement2 from './components/advertisement2'
+
 
 const LoginWrapper = ({ setUser }) => {
   const navigate = useNavigate();
@@ -200,6 +217,70 @@ const App = () => {
       content = <Layout><Home /></Layout>
   }
 
+  const LayoutWrapper = ({ children }) => {
+    const location = useLocation();
+    const isLiveRoute = location.pathname === '/livescore' || location.pathname === '/live-scores';
+    const isTeamRoute = location.pathname.startsWith('/team-info');
+    const isPlayerRoute = location.pathname.startsWith('/player-info');
+    const isLeagueRoute = location.pathname.startsWith('/league-info');
+    const isMatchRoute = location.pathname.startsWith('/match-details');
+    const isCoachRoute = location.pathname.startsWith('/coach-info');
+    const isRefereeRoute = location.pathname.startsWith('/referee-info');
+    const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
+    const hideSidebars = isAuthRoute;
+
+    let leftSidebarContent = undefined;
+    if (isLiveRoute) {
+      leftSidebarContent = <FeatureLeagueNavigator />;
+    } else if (isRefereeRoute) {
+      leftSidebarContent = <Advertisement />;
+    }
+    
+    let rightSidebarContent = undefined;
+    let rightAdContent = undefined;
+    let contentWide = false;
+
+    if (isLiveRoute) {
+      rightSidebarContent = <FeatureRightPanel showAds={false} showDownload={false} />;
+      contentWide = true;
+    } else if (isTeamRoute) {
+      rightSidebarContent = <TeamRightSidebar />;
+      contentWide = true;
+    } else if (isPlayerRoute) {
+      rightSidebarContent = <PlayerRightSidebar />;
+      contentWide = true;
+    } else if (isLeagueRoute) {
+      rightSidebarContent = <LeagueRightSidebar />;
+      contentWide = true;
+    } else if (isMatchRoute) {
+      rightSidebarContent = <MatchRightSidebar matches={relatedMatches} />;
+      contentWide = true;
+    } else if (isCoachRoute) {
+      rightSidebarContent = <CoachRightSidebar />;
+      contentWide = true;
+    } else if (isRefereeRoute) {
+      rightSidebarContent = <RefereeRightSidebar />;
+      rightAdContent = <Advertisement2 />;
+      contentWide = true;
+    }
+
+    return (
+      <Layout
+        user={user}
+        onLogout={handleLogout}
+        search={search}
+        setSearch={setSearch}
+        hideSidebars={hideSidebars}
+        leftSidebarContent={leftSidebarContent}
+        rightSidebarContent={rightSidebarContent}
+        rightAdContent={rightAdContent}
+        contentWide={contentWide}
+      >
+        {children}
+      </Layout>
+    );
+  };
+
   return (
     <Router>
       {page !== 'home' && (
@@ -211,21 +292,28 @@ const App = () => {
           onNavigate={handleNavigate}
         />
       )}
-      <Layout user={user} onLogout={handleLogout} search={search} setSearch={setSearch}>
+      <LayoutWrapper>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/news" element={<NewsList />} />
           <Route path="/news/:id" element={<NewsDetailPage />} />
           <Route path="/admin" element={<AdminPanel userRole={user?.role} />} />
           <Route path="/livescore" element={<LiveScore />} />
+          <Route path="/live-scores" element={<LiveScore />} />
           <Route path="/poll" element={<Poll />} />
           <Route path="/journalist" element={<JournalistPanel />} />
           <Route path="/settings" element={<ProfileSettings />} />
           <Route path="/AvsB" element={<AvsB />} />
           <Route path="/login" element={<LoginWrapper setUser={setUser} />} />
           <Route path="/register" element={<RegisterWrapper setUser={setUser} />} />
+          <Route path="/league-info/:leagueId" element={<LeagueInfoPage embedded />} />
+          <Route path="/team-info/:teamId" element={<TeamInfoPage embedded />} />
+          <Route path="/player-info/:playerId" element={<PlayerInfoPage embedded />} />
+          <Route path="/coach-info/:coachId" element={<CoachInfoPage embedded />} />
+          <Route path="/referee-info/:refereeId" element={<RefereeInfoPage embedded />} />
+          <Route path="/match-details/:matchId" element={<MatchDetailsPage embedded />} />
         </Routes>
-      </Layout>
+      </LayoutWrapper>
     </Router>
   )
 }

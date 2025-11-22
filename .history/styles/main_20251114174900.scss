@@ -1,0 +1,743 @@
+@import './league-info.scss';
+@import './match-details.scss';
+@import './team-info.scss';
+@import './player-info.scss';
+@import './coach-info.scss';
+@import './referee-info.scss';
+
+// Asosiy o'zgaruvchilar
+:root {
+  --bg-color: #FAF4ED;
+  --text-color: #111111;
+  --accent-color: #153E75;
+  --border-color: #E5E5E5;
+  --gray-color: #666666;
+  --light-gray: #F5F5F5;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// Asosiy uslublar
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+// Gazeta uslubidagi layout
+.newspaper-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+// Header uslublari
+.header {
+  background: white;
+  border-bottom: 3px solid var(--accent-color);
+  padding: 15px 0;
+  box-shadow: var(--shadow);
+
+  &__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--accent-color);
+    text-decoration: none;
+  }
+
+  &__nav {
+    display: flex;
+    gap: 30px;
+
+    a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      transition: color 0.3s;
+
+      &:hover {
+        color: var(--accent-color);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  &__search {
+    position: relative;
+
+    input {
+      padding: 8px 35px 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-color);
+    }
+  }
+
+  &__lang {
+    select {
+      padding: 6px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: white;
+    }
+  }
+}
+
+// Sahifa sarlavhasi
+.page-title {
+  text-align: center;
+  margin: 30px 0;
+  
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    
+    &::after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 3px;
+      background: var(--accent-color);
+      margin: 15px auto;
+    }
+  }
+}
+
+// Yon panellar
+.sidebar {
+  &--left {
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+
+  &--right {
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+}
+
+// Liga navigatori
+.league-navigator {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+
+  &__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+
+  &__country {
+    margin-bottom: 15px;
+
+    &-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: var(--light-gray);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background: #E8E8E8;
+      }
+
+      .flag {
+        width: 20px;
+        height: 15px;
+        border-radius: 2px;
+      }
+
+      .country-name {
+        font-weight: 600;
+        flex: 1;
+      }
+
+      .toggle-icon {
+        transition: transform 0.3s;
+      }
+
+      &.active .toggle-icon {
+        transform: rotate(180deg);
+      }
+    }
+
+    &-leagues {
+      padding-left: 30px;
+      margin-top: 10px;
+
+      a {
+        display: block;
+        padding: 8px 0;
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s;
+
+        &:hover {
+          color: var(--accent-color);
+        }
+      }
+    }
+  }
+}
+
+// Asosiy kontent
+.main-content {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: var(--shadow);
+}
+
+// Liga bo'limi
+.league-section {
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 30px;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+
+    .league-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .league-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+
+    .matchday {
+      background: var(--accent-color);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+}
+
+// O'yin kartasi
+.match-card {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: all 0.3s;
+  background: white;
+
+  &:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+
+  &--live {
+    border-left: 4px solid #FF4444;
+    background: #FFF8F8;
+  }
+
+  &--finished {
+    background: #F8F8F8;
+    color: var(--gray-color);
+  }
+
+  &__team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &--home {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    &--away {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .team-logo {
+      width: 24px;
+      height: 24px;
+    }
+
+    .team-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+  }
+
+  &__score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-align: center;
+    min-width: 60px;
+  }
+
+  &__status {
+    text-align: center;
+    min-width: 80px;
+
+    .time {
+      font-size: 12px;
+      color: var(--gray-color);
+    }
+
+    .live-indicator {
+      background: #FF4444;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+.finished-matches {
+  margin-top: 32px;
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+    color: #1a3a6b;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .finished-match-card {
+    width: 100%;
+    border: 1px solid rgba(26, 58, 107, 0.12);
+    border-radius: 12px;
+    padding: 16px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: rgba(26, 58, 107, 0.4);
+      box-shadow: 0 12px 24px rgba(26, 58, 107, 0.08);
+    }
+
+    .teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      .team {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        color: #0f2444;
+
+        img {
+          width: 36px;
+          height: 36px;
+          object-fit: contain;
+        }
+      }
+
+      .score {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1a3a6b;
+      }
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #6b7a90;
+    }
+  }
+}
+
+.spotlight-grid {
+  margin-top: 32px;
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+    color: #1a3a6b;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+  }
+
+  .spotlight-card {
+    border: 1px solid rgba(26, 58, 107, 0.12);
+    border-radius: 12px;
+    padding: 16px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px rgba(26, 58, 107, 0.08);
+    }
+
+    &__badge {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #1a3a6b;
+      background: rgba(26, 58, 107, 0.08);
+      border-radius: 999px;
+      padding: 6px 12px;
+      width: fit-content;
+      font-weight: 600;
+    }
+
+    &__body {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    &__image {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f4f4f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &__info {
+      h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: #0f2444;
+      }
+
+      p {
+        margin: 4px 0 0;
+        font-size: 0.85rem;
+        color: #6b7a90;
+      }
+    }
+  }
+}
+
+// O'ng panel
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .panel-block {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+
+    &__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    &__content {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Jadval uslublari
+.standings-table {
+  width: 100%;
+  font-size: 12px;
+
+  th, td {
+    padding: 6px 4px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  th {
+    background: var(--light-gray);
+    font-weight: 600;
+    color: var(--accent-color);
+  }
+
+  .pos {
+    width: 25px;
+    text-align: center;
+  }
+
+  .pts {
+    width: 30px;
+    text-align: center;
+    font-weight: 600;
+  }
+}
+
+// Kelgusi o'yinlar
+.fixture-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .teams {
+    flex: 1;
+  }
+
+  .time {
+    color: var(--gray-color);
+    font-weight: 500;
+  }
+}
+
+// Reklama bloki
+.ad-block {
+  background: linear-gradient(135deg, #E8F4FD, #F0E8FD);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--gray-color);
+  margin-bottom: 20px;
+
+  .ad-text {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// Footer
+.footer {
+  background: var(--accent-color);
+  color: white;
+  padding: 40px 0 20px;
+  margin-top: 50px;
+
+  &__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  &__section {
+    h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    p, a {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: white;
+    }
+  }
+
+  &__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+
+    a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      margin-left: 10px;
+
+      &:hover {
+        color: white;
+      }
+    }
+  }
+}
+
+// Animatsiyalar
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Responsiv dizayn
+@media (max-width: 768px) {
+  .header {
+    &__container {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    &__nav {
+      gap: 20px;
+    }
+  }
+
+  .page-title h1 {
+    font-size: 2.5rem;
+  }
+
+  .match-card {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+
+    &__status {
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+  }
+
+  .league-section__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 20px 15px;
+  }
+
+  .page-title h1 {
+    font-size: 2rem;
+  }
+
+  .match-card {
+    padding: 12px;
+
+    &__team .team-name {
+      font-size: 12px;
+    }
+
+    &__score {
+      font-size: 1.2rem;
+    }
+  }
+}

@@ -47,12 +47,28 @@ h1 {
   font-weight: 700;
   line-height: 1.1;
   margin-bottom: 0.6em;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.6rem;
+  }
 }
 
 h2 {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5em;
+  
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+  }
 }
 
 h3 {
@@ -62,11 +78,21 @@ h3 {
   font-weight: 600;
   margin-bottom: 0.4em;
   text-transform: none;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 }
 
 .layout {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  gap: 32px;
   min-height: 100vh;
   background: var(--color-content);
   .right {
@@ -77,6 +103,24 @@ h3 {
   }
   overflow: visible !important;
   height: auto !important;
+}
+
+.layout--full {
+  .content {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.content--full {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.content--wide {
+  flex: 1;
+  width: auto;
+  max-width: 1200px;
 }
 
 .sidebar {
@@ -103,6 +147,20 @@ h3 {
   box-shadow: 0 0 8px #e0e0e0;
   padding: 32px 24px;
   min-height: 100vh;
+  
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 16px 12px;
+  }
+}
+
+.main-content--wide {
+  width: 100% !important;
+  max-width: 100% !important;
+  background: var(--color-bg);
 }
 
 nav {
@@ -579,6 +637,49 @@ hr {
     flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
+    gap: 0 !important;
+  }
+}
+
+// Mobile optimizations
+@media (max-width: 768px) {
+  .layout {
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .content {
+    padding: 16px 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .content--wide {
+    max-width: 100% !important;
+  }
+  
+  body {
+    font-size: 14px;
+  }
+  
+  .block {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 12px 8px !important;
+  }
+  
+  body {
+    font-size: 13px;
+  }
+  
+  .block {
+    padding: 10px 12px;
+    margin-bottom: 12px;
   }
 }
 
@@ -863,71 +964,106 @@ header {
 // Upcoming Matches Styles
 .upcoming-matches {
   background: #fff;
-  border: 1.5px solid var(--color-blue);
-  border-radius: 8px;
-  padding: 16px;
+  border: 1px solid #f3ebe0;
+  border-radius: 16px;
+  padding: 18px;
   margin-bottom: 18px;
   font-family: var(--font-sans2);
+  box-shadow: 0 12px 24px rgba(21, 62, 117, 0.08);
 }
 
 .upcoming-matches-title {
   font-family: var(--font-serif);
   color: var(--color-blue);
-  font-size: 1em;
-  margin: 0 0 12px 0;
-  text-align: center;
-  letter-spacing: 1px;
+  font-size: 1.05em;
+  margin: 0 0 14px 0;
+  position: relative;
+  padding-bottom: 6px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 110px;
+    height: 2px;
+    background-color: var(--color-blue);
+  }
 }
 
 .upcoming-matches-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .upcoming-match-item {
-  background: var(--color-accent);
-  border-radius: 4px;
-  padding: 8px 12px;
-  border: 1px solid var(--color-border);
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ebe2d8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .match-date {
   font-size: 0.75em;
   color: var(--color-blue);
   font-weight: 600;
-  margin-bottom: 4px;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
+  margin-bottom: 0.25rem;
+  text-align: center;
 }
 
 .match-teams-compact {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: 8px;
+}
+
+.team-item-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.team-logo-compact {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .team-name {
   font-size: 0.8em;
   font-weight: 600;
   color: var(--color-black);
-  flex: 1;
   text-align: center;
 }
 
 .vs-compact {
-  font-size: 0.7em;
-  color: var(--color-grey);
-  font-weight: 600;
-  margin: 0 4px;
+  font-size: 0.75em;
+  color: var(--color-blue);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 2px 0;
 }
 
 .match-time-compact {
-  text-align: center;
   font-size: 0.75em;
   color: var(--color-grey);
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  margin-top: 0.25rem;
 }
 
 .live-indicator {
@@ -1142,8 +1278,6 @@ header {
 }
 
 
-<<<<<<< HEAD
-
 // Asosiy o'zgaruvchilar
 :root {
   --bg-color: #FAF4ED;
@@ -1171,8 +1305,7 @@ body {
 
 // Gazeta uslubidagi layout
 .newspaper-layout {
-  display: grid;
-  grid-template-columns: 200px 1fr 200px;
+  display: flex;
   gap: 20px;
   max-width: 1400px;
   margin: 0 auto;
@@ -1728,17 +1861,17 @@ body {
     }
   }
 }
-=======
-.live_score_bottom{
-  .live_score_bottom1{
-    .live_score_bottom1_top{
+
+.live_score_bottom {
+  .live_score_bottom1 {
+    .live_score_bottom1_top {
       display: flex;
       align-items: center;
-      .live_score_bottom1_top_logo{
+
+      .live_score_bottom1_top_logo {
         width: 24px;
         height: 24px;
       }
     }
   }
 }
->>>>>>> 6de8cf7d00364ea6985e890f0c5e25459cb89466

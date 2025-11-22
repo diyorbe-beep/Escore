@@ -53,15 +53,21 @@ const UpcomingMatches = () => {
 
   return (
     <div className="upcoming-matches">
-      <h5 className="upcoming-matches-title">Yaqin O'yinlar</h5>
+      <h5 className="upcoming-matches-title">Keyingi O'yinlar</h5>
       <div className="upcoming-matches-list">
         {upcomingMatches.slice(0, 3).map((match, index) => (
           <div key={index} className="upcoming-match-item">
             <div className="match-date">{formatDate(match.date)}</div>
             <div className="match-teams-compact">
-              <span className="team-name">{match.home}</span>
-              <span className="vs-compact">vs</span>
-              <span className="team-name">{match.away}</span>
+              <div className="team-item-compact">
+                {match.homeLogo && <img src={match.homeLogo} alt={match.home} className="team-logo-compact" />}
+                <span className="team-name">{match.home}</span>
+              </div>
+              <span className="vs-compact">VS</span>
+              <div className="team-item-compact">
+                {match.awayLogo && <img src={match.awayLogo} alt={match.away} className="team-logo-compact" />}
+                <span className="team-name">{match.away}</span>
+              </div>
             </div>
             <div className="match-time-compact">
               {match.isLive ? (

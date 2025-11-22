@@ -1,110 +1,137 @@
-.top-leagues-card {
-    background: #ffffff;
+.top-leagues-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(26, 58, 107, 0.06);
+  border: 1px solid rgba(26, 58, 107, 0.08);
+  margin: 20px 0;
+
+  &__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a3a6b;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(26, 58, 107, 0.1);
+    padding-bottom: 8px;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__item {
+    border: 1px solid rgba(26, 58, 107, 0.08);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 20px 0;
-    margin-left: 35px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    .top-leagues-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 16px;
-        padding-bottom: 8px;
-        border-bottom: 2px solid #f0f0f0;
+    &.open {
+      box-shadow: 0 8px 20px rgba(26, 58, 107, 0.08);
+    }
+  }
+
+  &__item-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  &__flag {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(26, 58, 107, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__info {
+    flex: 1;
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .name {
+      font-weight: 600;
+      color: #0f2444;
+      font-size: 14px;
     }
 
-    .top-leagues-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 12px;
+    .meta {
+      font-size: 12px;
+      color: #6b7a90;
     }
+  }
 
-    .top-league-item {
-        display: flex;
-        align-items: center;
-        padding: 12px;
-        border-radius: 8px;
-        background: #f8f9fa;
-        transition: all 0.3s ease;
-        cursor: pointer;
+  &__badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(26, 58, 107, 0.08);
+    color: #1a3a6b;
+    text-transform: uppercase;
+  }
 
-        &:hover {
-            background: #e9ecef;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
+  &__chevron {
+    margin-left: auto;
+    font-size: 14px;
+    color: #6b7a90;
+    transition: transform 0.2s ease;
 
-        .top-league-logo {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            margin-right: 12px;
-            border-radius: 4px;
-            background: #ffffff;
-            padding: 2px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .top-league-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: #495057;
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    &.open {
+      transform: rotate(180deg);
     }
+  }
+
+  &__details {
+    list-style: none;
+    margin: 0;
+    padding: 0 18px 14px 56px;
+    border-top: 1px solid rgba(26, 58, 107, 0.06);
+    background: rgba(26, 58, 107, 0.02);
+
+    li {
+      font-size: 13px;
+      color: #3d4c66;
+      padding: 6px 0;
+      position: relative;
+
+      &::before {
+        content: '•';
+        color: #1a3a6b;
+        position: absolute;
+        left: -12px;
+      }
+    }
+  }
 }
 
-// Responsive design
 @media (max-width: 768px) {
-    .top-leagues-card {
-        padding: 16px;
-        margin: 16px 0;
+  .top-leagues-panel {
+    padding: 16px;
 
-        .top-leagues-list {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 8px;
-        }
-
-        .top-league-item {
-            padding: 10px;
-
-            .top-league-logo {
-                width: 28px;
-                height: 28px;
-                margin-right: 10px;
-            }
-
-            .top-league-name {
-                font-size: 13px;
-            }
-        }
+    &__item {
+      padding: 10px 12px;
     }
-}
-
-@media (max-width: 480px) {
-    .top-leagues-card {
-        .top-leagues-list {
-            grid-template-columns: 1fr;
-        }
-
-        .top-league-item {
-            .top-league-logo {
-                width: 24px;
-                height: 24px;
-                margin-right: 8px;
-            }
-
-            .top-league-name {
-                font-size: 12px;
-            }
-        }
-    }
+  }
 }

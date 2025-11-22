@@ -1,73 +1,141 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TopLeagues.scss';
 
-const leagues = [
+const topLeagues = [
   {
+    id: 'champions-league',
     name: 'UEFA Champions League',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/UEFA_Champions_League.svg/1200px-UEFA_Champions_League.svg.png',
+    region: 'Yevropa',
+    badge: 'UEFA',
+    flag: 'https://upload.wikimedia.org/wikipedia/commons/0/03/Flag_of_Europe.svg',
+    highlights: [
+      'Amaldagi chempion: Real Madrid',
+      'Top klublar: Man City, Bayern, PSG',
+      'Final: Wembley 2025'
+    ]
   },
   {
-    name: 'UEFA Europa League',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/UEFA_Europa_League_logo_%282024_version%29.svg/1436px-UEFA_Europa_League_logo_%282024_version%29.svg.png',
-  },
-  {
+    id: 'premier-league',
     name: 'Premier League',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/f/f2/Premier_League_Logo.svg',
+    region: 'Angliya',
+    badge: 'ENG',
+    flag: 'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg',
+    highlights: [
+      'Lider: Manchester City',
+      'Kuchli toʻrtlik: City, Liverpool, Arsenal, Spurs',
+      'Bosh murabbiylar dueli: Guardiola vs Klopp'
+    ]
   },
   {
-    name: 'LaLiga',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/LaLiga_logo_2023.svg/2048px-LaLiga_logo_2023.svg.png',
+    id: 'la-liga',
+    name: 'La Liga',
+    region: 'Ispaniya',
+    badge: 'ESP',
+    flag: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg',
+    highlights: [
+      'El Clásico avgust 18',
+      'Pichichi poygasi: Bellingham vs Lewandowski',
+      'Toʻpurar Vinisius 17 gol'
+    ]
   },
   {
-    name: 'Bundesliga',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/df/Bundesliga_logo_%282017%29.svg/1200px-Bundesliga_logo_%282017%29.svg.png',
-  },
-  {
+    id: 'serie-a',
     name: 'Serie A',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/ab/Serie_A_ENILIVE_logo.svg/1200px-Serie_A_ENILIVE_logo.svg.png',
+    region: 'Italiya',
+    badge: 'ITA',
+    flag: 'https://upload.wikimedia.org/wikipedia/en/0/03/Flag_of_Italy.svg',
+    highlights: [
+      'Skudetto poygasi: Inter vs Milan',
+      'Top darvozabon: Maignan',
+      'Yangi yulduz: Lautaro'
+    ]
   },
   {
+    id: 'bundesliga',
+    name: 'Bundesliga',
+    region: 'Germaniya',
+    badge: 'GER',
+    flag: 'https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg',
+    highlights: [
+      'Musobaqa: Bayern vs Leverkusen',
+      'Toʻpurar: Kane 24 gol',
+      'Derbi: Revierderby 24-noyabr'
+    ]
+  },
+  {
+    id: 'ligue1',
     name: 'Ligue 1',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Ligue_1_Uber_Eats_logo.svg/1200px-Ligue_1_Uber_Eats_logo.svg.png',
-  },
-  {
-    name: 'Eredivisie',
-    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR78ra_hc69VkQJmDiagH7Gz12CnISYdV_z4Q&s',
-  },
-  {
-    name: 'Brasileirão Série A',
-    logo: 'https://upload.wikimedia.org/wikipedia/pt/4/42/Campeonato_Brasileiro_S%C3%A9rie_A_logo.png',
-  },
-  {
-    name: 'CONMEBOL Libertadores',
-    logo: 'https://logowik.com/content/uploads/images/conmebol-libertadores4840.jpg',
-  },
-  {
-    name: 'CAF Champions League',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/d/d5/CAF_Champions_League.png',
-  },
-  {
-    name: 'MLS',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/MLS_crest_logo_RGB_gradient.svg/1200px-MLS_crest_logo_RGB_gradient.svg.png',
-  },
-  {
-    name: 'World Championship',
-    logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRaBSnSWTsOMGUSZlH8SN63M7FydyWwo_WzA&s',
+    region: 'Fransiya',
+    badge: 'FRA',
+    flag: 'https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg',
+    highlights: [
+      'PSG lider, Nice taʼqibda',
+      'Mbappé 18 gol',
+      'Yangi yulduz: Zaire-Emery'
+    ]
   },
 ];
 
-const TopLeagues = () => (
-  <div className="top-leagues-card">
-    <div className="top-leagues-title">Top leagues</div>
-    <ul className="top-leagues-list">
-      {leagues.map((league, idx) => (
-        <li key={idx} className="top-league-item">
-          <img src={league.logo} alt={league.name} className="top-league-logo" />
-          <span className="top-league-name">{league.name}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+const TopLeagues = () => {
+  const navigate = useNavigate();
+  const [openLeague, setOpenLeague] = useState(topLeagues[0]?.name);
+
+  const toggleLeague = (name, event) => {
+    event.stopPropagation();
+    setOpenLeague((prev) => (prev === name ? null : name));
+  };
+
+  const handleLeagueClick = (leagueId) => {
+    navigate(`/league-info/${leagueId}`);
+  };
+
+  return (
+    <div className="top-leagues-panel">
+      <h3 className="top-leagues-panel__title">Top leagues</h3>
+      <div className="top-leagues-panel__list">
+        {topLeagues.map((league) => {
+          const isOpen = openLeague === league.name;
+          return (
+            <div
+              key={league.id}
+              className={`top-leagues-panel__item ${isOpen ? 'open' : ''}`}
+            >
+              <button
+                type="button"
+                className="top-leagues-panel__item-header"
+                onClick={(e) => {
+                  toggleLeague(league.name, e);
+                  handleLeagueClick(league.id);
+                }}
+                aria-expanded={isOpen}
+              >
+                <div className="top-leagues-panel__flag">
+                  <img src={league.flag} alt={league.name} />
+                </div>
+                <div className="top-leagues-panel__info">
+                  <span className="name">{league.name}</span>
+                  <span className="meta">{league.region}</span>
+                </div>
+                <span className="top-leagues-panel__badge">{league.badge}</span>
+                <span className={`top-leagues-panel__chevron ${isOpen ? 'open' : ''}`} aria-hidden>
+                  ▾
+                </span>
+              </button>
+
+              {isOpen && (
+                <ul className="top-leagues-panel__details">
+                  {league.highlights.map((info) => (
+                    <li key={info}>{info}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default TopLeagues;
